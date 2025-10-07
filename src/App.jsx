@@ -1,35 +1,65 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import {useState} from 'react';
+import './css/App.css';
+import {Start, Game, Scores} from './pages/index.jsx';
+
+const APP_STATES = {
+    START: 'start',
+    GAME: 'game',
+    SCORES: 'scores',
+};
 
 function App() {
-  const [count, setCount] = useState(0)
+    const [currentPage, setCurrentPage] = useState(APP_STATES.START);
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    const handleStartGame = () => {
+        setCurrentPage(APP_STATES.GAME);
+    };
+
+    const handleGameComplete = () => {
+        setCurrentPage(APP_STATES.SCORES);
+    };
+
+    const handleBackToStart = () => {
+        setCurrentPage(APP_STATES.START);
+    };
+
+    const handlePlayAgain = () => {
+        setCurrentPage(APP_STATES.GAME);
+    };
+
+    const renderCurrentPage = () => {
+        switch (currentPage) {
+            case APP_STATES.START:
+                return <Start onStartGame={handleStartGame}/>;
+
+            case APP_STATES.GAME:
+                return (
+                    <Game
+                        onGameComplete={handleGameComplete}
+                        onBackToStart={handleBackToStart}
+                    />
+                );
+
+            case APP_STATES.SCORES:
+                return (
+                    <Scores
+                        onPlayAgain={handlePlayAgain}
+                        onBackToStart={handleBackToStart}
+                    />
+                );
+
+            default:
+                return <Start onStartGame={handleStartGame}/>;
+        }
+    };
+
+    return (
+        <>
+            <div className="app">
+                {renderCurrentPage()}
+            </div>
+        </>
+    )
 }
 
 export default App
