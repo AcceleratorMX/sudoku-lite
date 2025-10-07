@@ -1,13 +1,6 @@
 @import url(./reset.css);
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 :root {
-    /* Кольорова палітра */
     --primary-color: #667eea;
     --primary-dark: #764ba2;
     --secondary-color: #4caf50;
@@ -42,3 +35,150 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
+
+body {
+    min-height: 100vh;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+button {
+    font-family: inherit;
+}
+
+input {
+    font-family: inherit;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+@media (max-width: 768px) {
+    :root {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        font-size: 12px;
+    }
+}
+
+/* #region Pages */
+/* #region Start Page */
+.start-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    padding: 20px;
+}
+
+.start-page__container {
+    background: var(--bg-primary);
+    border-radius: var(--radius-large);
+    padding: 40px;
+    box-shadow: var(--shadow-heavy);
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+}
+
+.start-page__title {
+    font-size: 2.5rem;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    font-weight: bold;
+}
+
+.start-page__description {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 32px;
+}
+
+.start-page__form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.start-page__input {
+    padding: 12px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-medium);
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.start-page__input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.start-page__input--error {
+    border-color: var(--danger-color);
+}
+
+.start-page__input--error:focus {
+    border-color: var(--danger-color);
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+}
+
+.start-page__error {
+    color: var(--danger-color);
+    font-size: 0.9rem;
+    margin-top: -10px;
+    text-align: left;
+}
+
+.start-page__button {
+    background: linear-gradient(45deg, var(--primary-color), var(--primary-dark));
+    color: var(--bg-primary);
+    border: none;
+    padding: 14px 24px;
+    border-radius: var(--radius-medium);
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.start-page__button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.start-page__button:active {
+    transform: translateY(0);
+}
+/* #endregion */
+
+/* #region Game Page */
+/* #endregion */
+
+/* #region Scores Page */
+/* #endregion */
+
+/* #endregion */
+
+/* #region Components */
+/* #endregion */

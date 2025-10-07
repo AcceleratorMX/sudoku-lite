@@ -1,17 +1,19 @@
 import {useState} from 'react';
 import './css/App.css';
 import {Start, Game, Scores} from './pages/index.jsx';
-
-const APP_STATES = {
-    START: 'start',
-    GAME: 'game',
-    SCORES: 'scores',
-};
+import { APP_STATES } from './constants'
 
 function App() {
     const [currentPage, setCurrentPage] = useState(APP_STATES.START);
+    const [playerData, setPlayerData] = useState({
+        playerName: ''
+    });
 
-    const handleStartGame = () => {
+    const handleStartGame = (playerName) => {
+        setPlayerData({
+            ...playerData,
+            playerName: playerName
+        });
         setCurrentPage(APP_STATES.GAME);
     };
 
@@ -37,6 +39,7 @@ function App() {
                     <Game
                         onGameComplete={handleGameComplete}
                         onBackToStart={handleBackToStart}
+                        playerName={playerData.playerName}
                     />
                 );
 
