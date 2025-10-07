@@ -1,4 +1,3 @@
-import React from "react";
 import { PlayerNameForm } from "../components/index.jsx";
 
 const Start = ({ onStartGame }) => {

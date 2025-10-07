@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { NAME_VALIDATION } from '../../constants/index.js';
-import { Button } from '../index.jsx';
+import {useState} from 'react';
+import {NAME_VALIDATION} from '../../constants/index.js';
+import {Button} from '../index.jsx';
 
-const PlayerNameForm = ({ onSubmit, className = '' }) => {
+const PlayerNameForm = ({onSubmit, className = ''}) => {
     const [playerName, setPlayerName] = useState('');
     const [error, setError] = useState('');
 
@@ -34,9 +34,7 @@ const PlayerNameForm = ({ onSubmit, className = '' }) => {
 
     return (
         <form className={`player-name-form ${className}`} onSubmit={handleSubmit}>
-            <label htmlFor="nickname" className="player-name-form__label">
-                Enter your name
-            </label>
+            <label htmlFor="nickname" className="player-name-form__label"></label>
             <input
                 type="text"
                 id="nickname"
