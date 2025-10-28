@@ -1,14 +1,46 @@
+import { useEffect, useState } from 'react';
 import {Button, ScoresList} from '../components/index.jsx';
 import {formatTime} from "../utils/formatTime.js";
+import { useLocalStorage } from '../hooks';
 
 const Scores = ({onPlayAgain, onBackToStart, gameResults}) => {
+    const [allScores, setAllScores] = useLocalStorage('sudoku-scores', []);
+    const [currentPlayerRank, setCurrentPlayerRank] = useState(null);
+
     const results = gameResults || {
         playerName: 'Player',
         score: 750,
         time: 245,
         moves: 67,
+        mistakes: 0,
         difficulty: 'Medium'
     };
+
+    useEffect(() => {
+        if (gameResults) {
+            const newScore = {
+                id: Date.now(),
+                name: results.playerName,
+                score: results.score,
+                time: results.time,
+                moves: results.moves,
+                mistakes: results.mistakes,
+                difficulty: results.difficulty,
+                date: new Date().toISOString()
+            };
+
+            const updatedScores = [...allScores, newScore];
+            
+            updatedScores.sort((a, b) => b.score - a.score);
+            
+            const topScores = updatedScores.slice(0, 100);
+            
+            setAllScores(topScores);
+            
+            const rank = topScores.findIndex(s => s.id === newScore.id) + 1;
+            setCurrentPlayerRank(rank);
+        }
+    }, [gameResults, results.playerName, results.score, results.time, results.moves, results.mistakes, results.difficulty, allScores, setAllScores]);
 
     const getScoreGrade = (score) => {
         if (score >= 900) return 'Excellent!';
@@ -17,18 +49,20 @@ const Scores = ({onPlayAgain, onBackToStart, gameResults}) => {
         return 'Try Again!';
     };
 
-    const topPlayers = [
-        {id: 1, rank: 1, name: 'Alex', score: 950},
-        {id: 2, rank: 2, name: 'Sam', score: 890},
-        {id: 3, rank: 3, name: 'Jordan', score: 820}
-    ];
 
-    const currentPlayer = {
-        id: 4,
-        rank: 56,
+    const topPlayers = allScores.slice(0, 10).map((score, index) => ({
+        id: score.id,
+        rank: index + 1,
+        name: score.name,
+        score: score.score
+    }));
+
+    const currentPlayer = currentPlayerRank ? {
+        id: Date.now(),
+        rank: currentPlayerRank,
         name: results.playerName,
         score: results.score
-    };
+    } : null;
 
     return (
         <div className="scores-page">
@@ -39,6 +73,11 @@ const Scores = ({onPlayAgain, onBackToStart, gameResults}) => {
                     <div className="scores-page__player">
                         <h2 className="scores-page__player-name">{results.playerName}</h2>
                         <div className="scores-page__grade">{getScoreGrade(results.score)}</div>
+                        {currentPlayerRank && (
+                            <div className="scores-page__rank">
+                                Rank: #{currentPlayerRank}
+                            </div>
+                        )}
                     </div>
 
                     <div className="scores-page__stats">
@@ -61,6 +100,13 @@ const Scores = ({onPlayAgain, onBackToStart, gameResults}) => {
                                 <span className="scores-page__stat-label">Moves</span>
                                 <span className="scores-page__stat-value">
                                     {results.moves}
+                                </span>
+                            </div>
+
+                            <div className="scores-page__stat">
+                                <span className="scores-page__stat-label">Mistakes</span>
+                                <span className="scores-page__stat-value">
+                                    {results.mistakes || 0}
                                 </span>
                             </div>
 
@@ -94,12 +140,14 @@ const Scores = ({onPlayAgain, onBackToStart, gameResults}) => {
                     </Button>
                 </div>
 
-                <ScoresList
-                    title="Top Scores"
-                    players={topPlayers}
-                    currentPlayer={currentPlayer}
-                    showCurrentUserSeparately={true}
-                />
+                {topPlayers.length > 0 && (
+                    <ScoresList
+                        title="Top Scores"
+                        players={topPlayers}
+                        currentPlayer={currentPlayer}
+                        showCurrentUserSeparately={currentPlayerRank && currentPlayerRank > 10}
+                    />
+                )}
             </div>
         </div>
     );
