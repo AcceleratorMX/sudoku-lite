@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { Grid, Button } from '../index.jsx';
+import { useTimer, useSudokuBoard, useGameStats } from '../../hooks';
+import { formatTime } from '../../utils/formatTime';
 
 const SudokuGame = ({
     playerName = 'Player',
@@ -7,38 +9,61 @@ const SudokuGame = ({
     onBackToStart,
     className = ''
 }) => {
-    const [gameStats, setGameStats] = useState({
-        moves: 0,
-        timeElapsed: 0,
-        isCompleted: false
-    });
+    // Використовуємо кастомні хуки
+    const { board, updateCell, isBoardComplete, isValidPlacement, newGame } = useSudokuBoard();
+    const { 
+        stats, 
+        incrementMoves, 
+        incrementMistakes, 
+        calculateFinalScore, 
+        completeGame, 
+        togglePause, 
+        resetStats 
+    } = useGameStats();
+    const { time, reset: resetTimer } = useTimer(!stats.isPaused && !stats.isCompleted);
+
+    useEffect(() => {
+        if (isBoardComplete() && !stats.isCompleted) {
+            completeGame();
+            
+            if (onGameComplete) {
+                const finalScore = calculateFinalScore(time, stats.moves, stats.mistakes);
+                onGameComplete({
+                    playerName: playerName,
+                    score: finalScore,
+                    time: time,
+                    moves: stats.moves,
+                    mistakes: stats.mistakes,
+                    difficulty: 'Medium'
+                });
+            }
+        }
+    }, [board, isBoardComplete, stats.isCompleted, completeGame, onGameComplete, calculateFinalScore, time, stats.moves, stats.mistakes, playerName]);
 
     const handleCellChange = (rowIndex, colIndex, value) => {
-        console.log(`Cell changed: [${rowIndex}, ${colIndex}] = ${value}`);
+        if (stats.isCompleted || stats.isPaused) return;
 
-        setGameStats(prev => ({
-            ...prev,
-            moves: prev.moves + 1
-        }));
+        const isValid = isValidPlacement(rowIndex, colIndex, value);
+        
+ 
+        updateCell(rowIndex, colIndex, value);
+        
+        
+        incrementMoves();
+        
+        if (!isValid && value !== '') {
+            incrementMistakes();
+        }
     };
 
     const handleNewGame = () => {
-        console.log('Starting new game...');
-        setGameStats({
-            moves: 0,
-            timeElapsed: 0,
-            isCompleted: false
-        });
+        newGame();
+        resetStats();
+        resetTimer();
     };
 
     const handlePause = () => {
-        console.log('Game paused/resumed');
-    };
-
-    const formatTime = (seconds) => {
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        return `${mins}:${secs.toString().padStart(2, '0')}`;
+        togglePause();
     };
 
     return (
@@ -53,13 +78,17 @@ const SudokuGame = ({
                 <div className="sudoku-game__stats">
                     <div className="sudoku-game__stat">
                         <span className="sudoku-game__stat-label">Moves:</span>
-                        <span className="sudoku-game__stat-value">{gameStats.moves}</span>
+                        <span className="sudoku-game__stat-value">{stats.moves}</span>
                     </div>
                     <div className="sudoku-game__stat">
                         <span className="sudoku-game__stat-label">Time:</span>
                         <span className="sudoku-game__stat-value">
-                            {formatTime(gameStats.timeElapsed)}
+                            {formatTime(time)}
                         </span>
+                    </div>
+                    <div className="sudoku-game__stat">
+                        <span className="sudoku-game__stat-label">Mistakes:</span>
+                        <span className="sudoku-game__stat-value">{stats.mistakes}</span>
                     </div>
                 </div>
 
@@ -68,8 +97,9 @@ const SudokuGame = ({
                         variant="secondary"
                         size="medium"
                         onClick={handlePause}
+                        disabled={stats.isCompleted}
                     >
-                        Pause
+                        {stats.isPaused ? 'Resume' : 'Pause'}
                     </Button>
                     <Button
                         variant="primary"
@@ -81,14 +111,26 @@ const SudokuGame = ({
                 </div>
             </div>
 
-            {gameStats.isCompleted && (
+            {stats.isPaused && !stats.isCompleted && (
+                <div className="sudoku-game__pause-overlay">
+                    <div className="sudoku-game__pause-message">
+                        Game Paused
+                    </div>
+                </div>
+            )}
+
+            {stats.isCompleted && (
                 <div className="sudoku-game__completion">
-                    🎉 Congratulations! You completed the puzzle in {gameStats.moves} moves!
+                    🎉 Congratulations! You completed the puzzle in {stats.moves} moves!
                 </div>
             )}
             
             <div className="sudoku-game__grid">
-                <Grid onCellChange={handleCellChange} />
+                <Grid 
+                    board={board}
+                    onCellChange={handleCellChange} 
+                    disabled={stats.isPaused || stats.isCompleted}
+                />
             </div>
 
             <div className="sudoku-game__controls">
@@ -100,11 +142,21 @@ const SudokuGame = ({
                     Exit
                 </Button>
                 
-                {gameStats.isCompleted && (
+                {stats.isCompleted && (
                     <Button
                         variant="success"
                         size="large"
-                        onClick={onGameComplete}
+                        onClick={() => {
+                            const finalScore = calculateFinalScore(time, stats.moves, stats.mistakes);
+                            onGameComplete({
+                                playerName: playerName,
+                                score: finalScore,
+                                time: time,
+                                moves: stats.moves,
+                                mistakes: stats.mistakes,
+                                difficulty: 'Medium'
+                            });
+                        }}
                     >
                         View Results
                     </Button>
