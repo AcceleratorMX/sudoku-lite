@@ -8,6 +8,7 @@ function App() {
     const [playerData, setPlayerData] = useState({
         playerName: ''
     });
+    const [gameResults, setGameResults] = useState(null);
 
     const handleStartGame = (playerName) => {
         setPlayerData({
@@ -17,16 +18,19 @@ function App() {
         setCurrentPage(APP_STATES.GAME);
     };
 
-    const handleGameComplete = () => {
+    const handleGameComplete = (results) => {
+        setGameResults(results);
         setCurrentPage(APP_STATES.SCORES);
     };
 
     const handleBackToStart = () => {
         setCurrentPage(APP_STATES.START);
+        setGameResults(null);
     };
 
     const handlePlayAgain = () => {
         setCurrentPage(APP_STATES.GAME);
+        setGameResults(null);
     };
 
     const renderCurrentPage = () => {
@@ -48,6 +52,7 @@ function App() {
                     <Scores
                         onPlayAgain={handlePlayAgain}
                         onBackToStart={handleBackToStart}
+                        gameResults={gameResults}
                     />
                 );
 
