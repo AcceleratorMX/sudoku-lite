@@ -1,4 +1,4 @@
-const Player = ({ id, rank, name, score, isCurrentUser = false }) => {
+const Player = ({rank, name, score, isCurrentUser = false }) => {
     const className = `scores-page__leaderboard-item ${isCurrentUser ? 'scores-page__leaderboard-item--current' : ''}`;
     
     return (

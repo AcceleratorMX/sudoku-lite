@@ -1,169 +1,180 @@
-import { useEffect } from 'react';
-import { Grid, Button } from '../index.jsx';
-import { useTimer, useSudokuBoard, useGameStats } from '../../hooks';
-import { formatTime } from '../../utils/formatTime';
+import { useEffect } from "react";
+import { Grid, Button } from "../index.jsx";
+import { useTimer, useSudokuBoard, useGameStats } from "../../hooks";
+import { formatTime } from "../../utils/formatTime";
+import { DIFFICULTY_SETTINGS } from "../../constants";
 
 const SudokuGame = ({
-    playerName = 'Player',
-    onGameComplete,
-    onBackToStart,
-    className = ''
+  playerName = "Player",
+  gameSettings,
+  onGameComplete,
+  onBackToStart,
+  className = "",
 }) => {
-    // Використовуємо кастомні хуки
-    const { board, updateCell, isBoardComplete, isValidPlacement, newGame } = useSudokuBoard();
-    const { 
-        stats, 
-        incrementMoves, 
-        incrementMistakes, 
-        calculateFinalScore, 
-        completeGame, 
-        togglePause, 
-        resetStats 
-    } = useGameStats();
-    const { time, reset: resetTimer } = useTimer(!stats.isPaused && !stats.isCompleted);
+  const difficulty = gameSettings?.difficulty || "medium";
+  const difficultyLabel = DIFFICULTY_SETTINGS[difficulty]?.label || "Medium";
+  const { board, updateCell, isBoardComplete, isValidPlacement, newGame } =
+    useSudokuBoard(difficulty);
+  const {
+    stats,
+    incrementMoves,
+    incrementMistakes,
+    calculateFinalScore,
+    completeGame,
+    togglePause,
+    resetStats,
+  } = useGameStats();
+  const { time, reset: resetTimer } = useTimer(
+    !stats.isPaused && !stats.isCompleted
+  );
 
-    useEffect(() => {
-        if (isBoardComplete() && !stats.isCompleted) {
-            completeGame();
-            
-            if (onGameComplete) {
-                const finalScore = calculateFinalScore(time, stats.moves, stats.mistakes);
-                onGameComplete({
-                    playerName: playerName,
-                    score: finalScore,
-                    time: time,
-                    moves: stats.moves,
-                    mistakes: stats.mistakes,
-                    difficulty: 'Medium'
-                });
-            }
-        }
-    }, [board, isBoardComplete, stats.isCompleted, completeGame, onGameComplete, calculateFinalScore, time, stats.moves, stats.mistakes, playerName]);
+  useEffect(() => {
+    if (isBoardComplete() && !stats.isCompleted) {
+      completeGame();
 
-    const handleCellChange = (rowIndex, colIndex, value) => {
-        if (stats.isCompleted || stats.isPaused) return;
+      if (onGameComplete) {
+        const finalScore = calculateFinalScore(
+          time,
+          stats.moves,
+          stats.mistakes
+        );
+        onGameComplete({
+          playerName: playerName,
+          score: finalScore,
+          time: time,
+          moves: stats.moves,
+          mistakes: stats.mistakes,
+          difficulty: difficultyLabel,
+        });
+      }
+    }
+  }, [
+    board,
+    isBoardComplete,
+    stats.isCompleted,
+    completeGame,
+    onGameComplete,
+    calculateFinalScore,
+    time,
+    stats.moves,
+    stats.mistakes,
+    playerName,
+    difficultyLabel,
+  ]);
 
-        const isValid = isValidPlacement(rowIndex, colIndex, value);
-        
- 
-        updateCell(rowIndex, colIndex, value);
-        
-        
-        incrementMoves();
-        
-        if (!isValid && value !== '') {
-            incrementMistakes();
-        }
-    };
+  const handleCellChange = (rowIndex, colIndex, value) => {
+    if (stats.isCompleted || stats.isPaused) return;
 
-    const handleNewGame = () => {
-        newGame();
-        resetStats();
-        resetTimer();
-    };
+    const isValid = isValidPlacement(rowIndex, colIndex, value);
 
-    const handlePause = () => {
-        togglePause();
-    };
+    updateCell(rowIndex, colIndex, value);
 
-    return (
-        <div className={`sudoku-game ${className}`}>
-            <div className="sudoku-game__header">
-                <div className="sudoku-game__player-info">
-                    <h2 className="sudoku-game__player-name">
-                        Player: {playerName}
-                    </h2>
-                </div>
-                
-                <div className="sudoku-game__stats">
-                    <div className="sudoku-game__stat">
-                        <span className="sudoku-game__stat-label">Moves:</span>
-                        <span className="sudoku-game__stat-value">{stats.moves}</span>
-                    </div>
-                    <div className="sudoku-game__stat">
-                        <span className="sudoku-game__stat-label">Time:</span>
-                        <span className="sudoku-game__stat-value">
-                            {formatTime(time)}
-                        </span>
-                    </div>
-                    <div className="sudoku-game__stat">
-                        <span className="sudoku-game__stat-label">Mistakes:</span>
-                        <span className="sudoku-game__stat-value">{stats.mistakes}</span>
-                    </div>
-                </div>
+    incrementMoves();
 
-                <div className="sudoku-game__actions">
-                    <Button
-                        variant="secondary"
-                        size="medium"
-                        onClick={handlePause}
-                        disabled={stats.isCompleted}
-                    >
-                        {stats.isPaused ? 'Resume' : 'Pause'}
-                    </Button>
-                    <Button
-                        variant="primary"
-                        size="medium"
-                        onClick={handleNewGame}
-                    >
-                        New Game
-                    </Button>
-                </div>
-            </div>
+    if (!isValid && value !== "") {
+      incrementMistakes();
+    }
+  };
 
-            {stats.isPaused && !stats.isCompleted && (
-                <div className="sudoku-game__pause-overlay">
-                    <div className="sudoku-game__pause-message">
-                        Game Paused
-                    </div>
-                </div>
-            )}
+  const handleNewGame = () => {
+    newGame();
+    resetStats();
+    resetTimer();
+  };
 
-            {stats.isCompleted && (
-                <div className="sudoku-game__completion">
-                    🎉 Congratulations! You completed the puzzle in {stats.moves} moves!
-                </div>
-            )}
-            
-            <div className="sudoku-game__grid">
-                <Grid 
-                    board={board}
-                    onCellChange={handleCellChange} 
-                    disabled={stats.isPaused || stats.isCompleted}
-                />
-            </div>
+  const handlePause = () => {
+    togglePause();
+  };
 
-            <div className="sudoku-game__controls">
-                <Button
-                    variant="secondary"
-                    size="large"
-                    onClick={onBackToStart}
-                >
-                    Exit
-                </Button>
-                
-                {stats.isCompleted && (
-                    <Button
-                        variant="success"
-                        size="large"
-                        onClick={() => {
-                            const finalScore = calculateFinalScore(time, stats.moves, stats.mistakes);
-                            onGameComplete({
-                                playerName: playerName,
-                                score: finalScore,
-                                time: time,
-                                moves: stats.moves,
-                                mistakes: stats.mistakes,
-                                difficulty: 'Medium'
-                            });
-                        }}
-                    >
-                        View Results
-                    </Button>
-                )}
-            </div>
+  return (
+    <div className={`sudoku-game ${className}`}>
+      <div className="sudoku-game__header">
+        <div className="sudoku-game__info">
+          <span className="sudoku-game__player">{playerName}</span>
+          <span className="sudoku-game__difficulty">{difficultyLabel}</span>
         </div>
-    );
+
+        <div className="sudoku-game__stats">
+          <div className="sudoku-game__stat">
+            <span className="sudoku-game__stat-label">Moves</span>
+            <span className="sudoku-game__stat-value">{stats.moves}</span>
+          </div>
+          <div className="sudoku-game__stat">
+            <span className="sudoku-game__stat-label">Time</span>
+            <span className="sudoku-game__stat-value">{formatTime(time)}</span>
+          </div>
+          <div className="sudoku-game__stat">
+            <span className="sudoku-game__stat-label">Mistakes</span>
+            <span className="sudoku-game__stat-value">{stats.mistakes}</span>
+          </div>
+        </div>
+
+        <div className="sudoku-game__actions">
+          <Button
+            variant="secondary"
+            size="small"
+            onClick={handlePause}
+            disabled={stats.isCompleted}
+          >
+            {stats.isPaused ? "Resume" : "Pause"}
+          </Button>
+          <Button variant="primary" size="small" onClick={handleNewGame}>
+            New Game
+          </Button>
+        </div>
+      </div>
+
+      {stats.isPaused && !stats.isCompleted && (
+        <div className="sudoku-game__pause-overlay">
+          <div className="sudoku-game__pause-message">Game Paused</div>
+        </div>
+      )}
+
+      {stats.isCompleted && (
+        <div className="sudoku-game__completion">
+          🎉 Congratulations! You completed the puzzle in {stats.moves} moves!
+        </div>
+      )}
+
+      <div className="sudoku-game__grid">
+        <Grid
+          board={board}
+          onCellChange={handleCellChange}
+          disabled={stats.isPaused || stats.isCompleted}
+        />
+      </div>
+
+      <div className="sudoku-game__controls">
+        <Button variant="secondary" size="medium" onClick={onBackToStart}>
+          Exit
+        </Button>
+
+        {stats.isCompleted && (
+          <Button
+            variant="success"
+            size="large"
+            onClick={() => {
+              const finalScore = calculateFinalScore(
+                time,
+                stats.moves,
+                stats.mistakes
+              );
+              onGameComplete({
+                playerName: playerName,
+                score: finalScore,
+                time: time,
+                moves: stats.moves,
+                mistakes: stats.mistakes,
+                difficulty: difficultyLabel,
+              });
+            }}
+          >
+            View Results
+          </Button>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default SudokuGame;
