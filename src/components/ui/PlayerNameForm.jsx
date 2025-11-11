@@ -1,62 +1,67 @@
-import {useState} from 'react';
-import {NAME_VALIDATION} from '../../constants/index.js';
-import {Button} from '../index.jsx';
+﻿import { useForm } from "react-hook-form";
+import { NAME_VALIDATION } from "../../constants/index.js";
+import { Button } from "../index.jsx";
 
-const PlayerNameForm = ({onSubmit, className = ''}) => {
-    const [playerName, setPlayerName] = useState('');
-    const [error, setError] = useState('');
+const PlayerNameForm = ({ onSubmit, className = "" }) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    mode: "onChange",
+    defaultValues: {
+      playerName: "",
+    },
+  });
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+  const onSubmitForm = (data) => {
+    onSubmit(data.playerName.trim());
+  };
 
-        const trimmedName = playerName.trim();
-
-        if (trimmedName.length < NAME_VALIDATION.MIN_NAME_LENGTH) {
-            setError(`Minimum name length must be ${NAME_VALIDATION.MIN_NAME_LENGTH} characters!`);
-            return;
-        }
-
-        if (trimmedName.length > NAME_VALIDATION.MAX_NAME_LENGTH) {
-            setError(`Maximum name length must be ${NAME_VALIDATION.MAX_NAME_LENGTH} characters!`);
-            return;
-        }
-
-        setError('');
-        onSubmit(trimmedName);
-    };
-
-    const handlePlayerNameChange = (e) => {
-        setPlayerName(e.target.value);
-        if (error) {
-            setError('');
-        }
-    };
-
-    return (
-        <form className={`player-name-form ${className}`} onSubmit={handleSubmit}>
-            <label htmlFor="nickname" className="player-name-form__label"></label>
-            <input
-                type="text"
-                id="nickname"
-                className={`player-name-form__input ${error ? 'player-name-form__input--error' : ''}`}
-                placeholder="Enter your name..."
-                minLength={NAME_VALIDATION.MIN_NAME_LENGTH}
-                maxLength={NAME_VALIDATION.MAX_NAME_LENGTH}
-                value={playerName}
-                onChange={handlePlayerNameChange}
-                required
-            />
-            {error && <span className="player-name-form__error">{error}</span>}
-            <Button
-                type="submit"
-                variant="primary"
-                size="large"
-                className="player-name-form__submit"
-            >
-                Start Game
-            </Button>
-        </form>
-    );
+  return (
+    <form
+      className={`player-name-form ${className}`}
+      onSubmit={handleSubmit(onSubmitForm)}
+    >
+      <label htmlFor="nickname" className="player-name-form__label"></label>
+      <input
+        type="text"
+        id="nickname"
+        className={`player-name-form__input ${
+          errors.playerName ? "player-name-form__input--error" : ""
+        }`}
+        placeholder="Enter your name..."
+        {...register("playerName", {
+          required: "Name is required",
+          minLength: {
+            value: NAME_VALIDATION.MIN_NAME_LENGTH,
+            message: `Minimum name length is ${NAME_VALIDATION.MIN_NAME_LENGTH} characters`,
+          },
+          maxLength: {
+            value: NAME_VALIDATION.MAX_NAME_LENGTH,
+            message: `Maximum name length is ${NAME_VALIDATION.MAX_NAME_LENGTH} characters`,
+          },
+          validate: {
+            notEmpty: (value) =>
+              value.trim().length > 0 || "Name cannot be only spaces",
+          },
+        })}
+      />
+      {errors.playerName && (
+        <span className="player-name-form__error">
+          {errors.playerName.message}
+        </span>
+      )}
+      <Button
+        type="submit"
+        variant="primary"
+        size="large"
+        className="player-name-form__submit"
+      >
+        Start Game
+      </Button>
+    </form>
+  );
 };
 
 export default PlayerNameForm;

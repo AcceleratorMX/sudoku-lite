@@ -368,6 +368,120 @@ input {
 }
 /* #endregion */
 
+/* #region GameSettingsForm */
+.game-settings-form {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.game-settings-form__label {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.game-settings-form__select {
+    padding: 14px 32px 14px 14px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-medium);
+    font-size: 0.95rem;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    min-width: 140px;
+}
+
+.game-settings-form__select:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.game-settings-form__select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+}
+
+.game-settings-form__select option {
+    padding: 10px;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+/* #endregion */
+
+/* #region StartForm */
+.start-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.start-form__fields {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: flex-end;
+}
+
+.start-form__input-wrapper {
+    grid-column: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.start-form__label {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    text-align: left;
+}
+
+.start-form__input {
+    padding: 12px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-medium);
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.start-form__input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.start-form__input--error {
+    border-color: var(--danger-color);
+}
+
+.start-form__input--error:focus {
+    border-color: var(--danger-color);
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+}
+
+.start-form__error {
+    color: var(--danger-color);
+    font-size: 0.9rem;
+    text-align: left;
+    margin-top: -4px;
+}
+
+.start-form__settings {
+    grid-column: 2;
+}
+
+.start-form__submit {
+    width: 100%;
+}
+/* #endregion */
+
 /* #region Button */
 .button {
   font-family: inherit;
@@ -427,9 +541,9 @@ input {
 }
 
 .button--small {
-  padding: 8px 16px;
+  padding: 12px 6px;
   font-size: 0.9rem;
-  min-width: 80px;
+  min-width: 60px;
 }
 
 .button--medium {
@@ -595,6 +709,24 @@ input {
     width: 100%;
     max-width: 500px;
     margin-bottom: 10px;
+}
+
+.sudoku-game__info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.sudoku-game__player {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.sudoku-game__difficulty {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 500;
 }
 
 .sudoku-game__stats {
@@ -872,4 +1004,138 @@ input {
     color: var(--primary-color);
 }
 
+/* #endregion */
+
+/* #region Dialog (Portal) */
+.dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.dialog {
+    background: var(--bg-primary);
+    border-radius: var(--radius-large);
+    box-shadow: var(--shadow-heavy);
+    max-width: 500px;
+    width: 100%;
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.dialog__header {
+    padding: 24px 24px 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.dialog__title {
+    font-size: 1.8rem;
+    color: var(--text-primary);
+    font-weight: bold;
+    margin: 0;
+    text-align: center;
+}
+
+.dialog__content {
+    padding: 24px;
+}
+
+.dialog__message {
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+    text-align: center;
+    line-height: 1.6;
+}
+
+.dialog__message:last-of-type {
+    margin-bottom: 24px;
+}
+
+.dialog__stats {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    padding: 20px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-medium);
+}
+
+.dialog__stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.dialog__stat-label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.dialog__stat-value {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.dialog__actions {
+    display: flex;
+    gap: 12px;
+    padding: 16px 24px 24px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.dialog__actions button {
+    min-width: 140px;
+}
+
+@media (max-width: 600px) {
+    .dialog {
+        margin: 0 10px;
+    }
+    
+    .dialog__actions {
+        flex-direction: column;
+    }
+    
+    .dialog__actions button {
+        width: 100%;
+    }
+    
+    .dialog__stats {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
 /* #endregion */

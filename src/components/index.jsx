@@ -1,7 +1,11 @@
-export { default as Button } from './ui/Button';
+﻿export { default as Button } from './ui/Button';
 export { default as PlayerNameForm } from './ui/PlayerNameForm';
+export { default as GameSettingsForm } from './ui/GameSettingsForm';
+export { default as StartForm } from './ui/StartForm';
 export { default as Player } from './ui/Player';
 export { default as ScoresList } from './ui/ScoresList';
+export { default as Portal } from './ui/Portal';
+export { default as GameCompletionDialog } from './ui/GameCompletionDialog';
 export { default as Cell } from './game/Cell';
 export { default as Grid } from './game/Grid';
 export { default as SudokuGame } from './game/SudokuGame';

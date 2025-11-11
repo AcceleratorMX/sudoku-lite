@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 
-const useGameStats = () => {
-    const [stats, setStats] = useState({
+const useGameStats = (initialStats = null) => {
+    const [stats, setStats] = useState(initialStats || {
         moves: 0,
         mistakes: 0,
         score: 0,
@@ -68,6 +68,12 @@ const useGameStats = () => {
         });
     }, []);
 
+    const restoreStats = useCallback((savedStats) => {
+        if (savedStats) {
+            setStats(savedStats);
+        }
+    }, []);
+
     return {
         stats,
         incrementMoves,
@@ -76,7 +82,8 @@ const useGameStats = () => {
         calculateFinalScore,
         completeGame,
         togglePause,
-        resetStats
+        resetStats,
+        restoreStats,
     };
 };
 
