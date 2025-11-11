@@ -1,6 +1,6 @@
 ﻿import { SudokuGame } from "../components/index.jsx";
 
-const Game = ({ onGameComplete, onBackToStart, playerName, gameSettings }) => {
+const Game = ({ onGameComplete, onBackToStart, playerName, gameSettings, savedGame, onSaveProgress }) => {
   const handleGameComplete = (gameResults) => {
     if (onGameComplete) {
       onGameComplete(gameResults);
@@ -19,6 +19,8 @@ const Game = ({ onGameComplete, onBackToStart, playerName, gameSettings }) => {
         <SudokuGame
           playerName={playerName || "Player"}
           gameSettings={gameSettings}
+          savedGame={savedGame}
+          onSaveProgress={onSaveProgress}
           onGameComplete={handleGameComplete}
           onBackToStart={handleBackToStart}
           className="game-page__sudoku"

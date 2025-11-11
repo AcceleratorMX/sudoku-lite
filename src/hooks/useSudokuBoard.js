@@ -12,20 +12,20 @@ function isValidPlacementInArray(board, row, col, num) {
   for (let c = 0; c < SUDOKU.GRID_SIZE; c++) {
     if (board[row][c] === num) return false;
   }
-  
+
   for (let r = 0; r < SUDOKU.GRID_SIZE; r++) {
     if (board[r][col] === num) return false;
   }
 
   const startRow = Math.floor(row / SUDOKU.SUBGRID_SIZE) * SUDOKU.SUBGRID_SIZE;
   const startCol = Math.floor(col / SUDOKU.SUBGRID_SIZE) * SUDOKU.SUBGRID_SIZE;
-  
+
   for (let r = startRow; r < startRow + SUDOKU.SUBGRID_SIZE; r++) {
     for (let c = startCol; c < startCol + SUDOKU.SUBGRID_SIZE; c++) {
       if (board[r][c] === num) return false;
     }
   }
-  
+
   return true;
 }
 
@@ -35,15 +35,15 @@ function fillBoard(board) {
       if (board[row][col] === 0) {
         const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
         shuffleArray(numbers);
-        
+
         for (const num of numbers) {
           if (isValidPlacementInArray(board, row, col, num)) {
             board[row][col] = num;
-            
+
             if (fillBoard(board)) {
               return true;
             }
-            
+
             board[row][col] = 0;
           }
         }
@@ -55,10 +55,10 @@ function fillBoard(board) {
 }
 
 function generateSolvedBoard() {
-  const board = Array(SUDOKU.GRID_SIZE).fill(null).map(() => 
-    Array(SUDOKU.GRID_SIZE).fill(0)
-  );
-  
+  const board = Array(SUDOKU.GRID_SIZE)
+    .fill(null)
+    .map(() => Array(SUDOKU.GRID_SIZE).fill(0));
+
   fillBoard(board);
   return board;
 }
@@ -66,32 +66,32 @@ function generateSolvedBoard() {
 function generateInitialBoard(difficultyLevel) {
   const filledCells = DIFFICULTY_SETTINGS[difficultyLevel]?.filledCells || 30;
   const solvedBoard = generateSolvedBoard();
-  
+
   const newBoard = [];
   const totalCells = SUDOKU.GRID_SIZE * SUDOKU.GRID_SIZE;
   const cellsToRemove = totalCells - filledCells;
-  
+
   const positions = [];
   for (let row = 0; row < SUDOKU.GRID_SIZE; row++) {
     for (let col = 0; col < SUDOKU.GRID_SIZE; col++) {
       positions.push({ row, col });
     }
   }
-  
+
   shuffleArray(positions);
-  
+
   const cellsToRemoveSet = new Set();
   for (let i = 0; i < cellsToRemove; i++) {
     const pos = positions[i];
     cellsToRemoveSet.add(`${pos.row}-${pos.col}`);
   }
-  
+
   for (let row = 0; row < SUDOKU.GRID_SIZE; row++) {
     const rowCells = [];
     for (let col = 0; col < SUDOKU.GRID_SIZE; col++) {
       const key = `${row}-${col}`;
       const isPreFilled = !cellsToRemoveSet.has(key);
-      
+
       rowCells.push({
         id: `cell-${row}-${col}`,
         value: isPreFilled ? solvedBoard[row][col] : SUDOKU.EMPTY_CELL,
@@ -105,8 +105,10 @@ function generateInitialBoard(difficultyLevel) {
   return newBoard;
 }
 
-const useSudokuBoard = (difficulty = "medium") => {
-  const [board, setBoard] = useState(() => generateInitialBoard(difficulty));
+const useSudokuBoard = (difficulty = "medium", initialBoard = null) => {
+  const [board, setBoard] = useState(
+    () => initialBoard || generateInitialBoard(difficulty)
+  );
 
   const updateCell = useCallback((rowIndex, colIndex, value) => {
     setBoard((prevBoard) => {
@@ -186,6 +188,12 @@ const useSudokuBoard = (difficulty = "medium") => {
     [resetBoard]
   );
 
+  const restoreBoard = useCallback((savedBoard) => {
+    if (savedBoard) {
+      setBoard(savedBoard);
+    }
+  }, []);
+
   return {
     board,
     updateCell,
@@ -193,6 +201,7 @@ const useSudokuBoard = (difficulty = "medium") => {
     isValidPlacement,
     resetBoard,
     newGame,
+    restoreBoard,
   };
 };
 

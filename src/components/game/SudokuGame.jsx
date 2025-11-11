@@ -7,14 +7,27 @@ import { DIFFICULTY_SETTINGS } from "../../constants";
 const SudokuGame = ({
   playerName = "Player",
   gameSettings,
+  savedGame,
+  onSaveProgress,
   onGameComplete,
   onBackToStart,
   className = "",
 }) => {
   const difficulty = gameSettings?.difficulty || "medium";
   const difficultyLabel = DIFFICULTY_SETTINGS[difficulty]?.label || "Medium";
-  const { board, updateCell, isBoardComplete, isValidPlacement, newGame } =
-    useSudokuBoard(difficulty);
+
+  const validSavedGame =
+    savedGame && savedGame.difficulty === difficulty ? savedGame : null;
+
+  const {
+    board,
+    updateCell,
+    isBoardComplete,
+    isValidPlacement,
+    newGame,
+    restoreBoard,
+  } = useSudokuBoard(difficulty, validSavedGame?.board);
+
   const {
     stats,
     incrementMoves,
@@ -23,22 +36,48 @@ const SudokuGame = ({
     completeGame,
     togglePause,
     resetStats,
-  } = useGameStats();
-  const { time, reset: resetTimer } = useTimer(
-    !stats.isPaused && !stats.isCompleted
+    restoreStats,
+  } = useGameStats(validSavedGame?.stats);
+
+  const {
+    time,
+    reset: resetTimer,
+    setTime,
+  } = useTimer(
+    !stats.isPaused && !stats.isCompleted,
+    validSavedGame?.time || 0
   );
+
+  useEffect(() => {
+    if (validSavedGame) {
+      if (validSavedGame.board) {
+        restoreBoard(validSavedGame.board);
+      }
+      if (validSavedGame.stats) {
+        restoreStats(validSavedGame.stats);
+      }
+      if (validSavedGame.time !== undefined) {
+        setTime(validSavedGame.time);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!stats.isCompleted && onSaveProgress && board) {
+      const timeoutId = setTimeout(() => {
+        onSaveProgress(board, stats, time);
+      }, 50);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [board, stats, time, stats.isCompleted, onSaveProgress]);
 
   useEffect(() => {
     if (isBoardComplete() && !stats.isCompleted) {
       completeGame();
-      // Не викликаємо onGameComplete тут - тільки при натисканні "View Results"
     }
-  }, [
-    board,
-    isBoardComplete,
-    stats.isCompleted,
-    completeGame,
-  ]);
+  }, [board, isBoardComplete, stats.isCompleted, completeGame]);
 
   const handleCellChange = (rowIndex, colIndex, value) => {
     if (stats.isCompleted || stats.isPaused) return;
@@ -58,6 +97,9 @@ const SudokuGame = ({
     newGame();
     resetStats();
     resetTimer();
+    if (onSaveProgress) {
+      onSaveProgress(null, null, 0);
+    }
   };
 
   const handlePause = () => {

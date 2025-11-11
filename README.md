@@ -71,7 +71,7 @@ Your final score is calculated based on the following formula:
 ## ✨ Features
 
 - **Difficulty levels** - Choose from Easy, Medium, Hard, or Expert
-- **Valid sudoku generation** - Every puzzle has a guaranteed solution
+- **Valid sudoku generation** - Every puzzle has a guaranteed solution with backtracking algorithm
 - **Real-time validation** - Invalid placements are tracked as mistakes
 - **Timer** - Track how long it takes to complete the puzzle
 - **Move counter** - Keep track of your total moves
@@ -80,6 +80,8 @@ Your final score is calculated based on the following formula:
 - **Pause functionality** - Pause and resume the game anytime
 - **Game completion dialog** - Modal dialog using React Portal
 - **Form validation** - Using react-hook-form for player settings
+- **Auto-save on change** - Game state automatically saved on every move
+- **Resume on refresh** - Continue your game after page reload
 - **Responsive design** - Works on desktop and mobile devices
 
 ## 📁 Project Structure
@@ -88,15 +90,16 @@ Your final score is calculated based on the following formula:
 src/
 ├── components/       # Reusable UI components
 │   ├── game/        # Game-specific components (Cell, Grid, SudokuGame)
-│   └── ui/          # UI components (Button, Player, Forms, Lists)
+│   └── ui/          # UI components (Button, Player, Forms, Portal, Dialogs)
 ├── pages/           # Page components (Start, Game, Scores)
 ├── hooks/           # Custom React hooks
-│   ├── useTimer.js          # Timer management
-│   ├── useSudokuBoard.js    # Board state and validation
+│   ├── useTimer.js          # Timer management with initial time support
+│   ├── useSudokuBoard.js    # Board generation, validation, and state
 │   ├── useGameStats.js      # Game statistics tracking
-│   └── useLocalStorage.js   # localStorage integration
-├── constants/       # App constants
-├── utils/          # Utility functions
+│   ├── useLocalStorage.js   # localStorage integration
+│   └── useGameState.js      # App state persistence
+├── constants/       # App constants and configuration
+├── utils/          # Utility functions (formatTime, etc.)
 └── css/            # Stylesheets
 ```
 
@@ -104,17 +107,19 @@ src/
 
 The application uses custom hooks to keep components clean and separate business logic:
 
-- **`useTimer`** - Manages game timer with start, pause, and reset
-- **`useSudokuBoard`** - Handles board generation, validation, and updates
-- **`useGameStats`** - Tracks moves, mistakes, and calculates final score
-- **`useLocalStorage`** - Manages persistent storage of game results
+- **`useTimer`** - Manages game timer with start, pause, reset, and initial time support
+- **`useSudokuBoard`** - Handles valid sudoku generation, validation, cell updates, and state restoration
+- **`useGameStats`** - Tracks moves, mistakes, calculates final score, and supports state restoration
+- **`useLocalStorage`** - Manages persistent storage with get/set/remove operations
+- **`useGameState`** - Manages entire app state persistence (current page, player data, game progress)
 
 ## 🛠️ Technologies
 
 - **React** - UI library
 - **react-hook-form** - Form validation and management
+- **prop-types** - Runtime type checking for React props
 - **Vite** - Build tool and dev server
 - **React Portal** - For modal dialogs
 - **CSS Custom Properties** - For theming and styling
 - **ESLint** - Code quality and linting
-- **localStorage API** - For persisting game results and settings
+- **localStorage API** - For persisting game results, settings, and progress
