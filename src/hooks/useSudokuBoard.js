@@ -1,35 +1,112 @@
 ﻿import { useState, useCallback } from "react";
 import { SUDOKU, DIFFICULTY_SETTINGS } from "../constants";
 
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+function isValidPlacementInArray(board, row, col, num) {
+  for (let c = 0; c < SUDOKU.GRID_SIZE; c++) {
+    if (board[row][c] === num) return false;
+  }
+  
+  for (let r = 0; r < SUDOKU.GRID_SIZE; r++) {
+    if (board[r][col] === num) return false;
+  }
+
+  const startRow = Math.floor(row / SUDOKU.SUBGRID_SIZE) * SUDOKU.SUBGRID_SIZE;
+  const startCol = Math.floor(col / SUDOKU.SUBGRID_SIZE) * SUDOKU.SUBGRID_SIZE;
+  
+  for (let r = startRow; r < startRow + SUDOKU.SUBGRID_SIZE; r++) {
+    for (let c = startCol; c < startCol + SUDOKU.SUBGRID_SIZE; c++) {
+      if (board[r][c] === num) return false;
+    }
+  }
+  
+  return true;
+}
+
+function fillBoard(board) {
+  for (let row = 0; row < SUDOKU.GRID_SIZE; row++) {
+    for (let col = 0; col < SUDOKU.GRID_SIZE; col++) {
+      if (board[row][col] === 0) {
+        const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+        shuffleArray(numbers);
+        
+        for (const num of numbers) {
+          if (isValidPlacementInArray(board, row, col, num)) {
+            board[row][col] = num;
+            
+            if (fillBoard(board)) {
+              return true;
+            }
+            
+            board[row][col] = 0;
+          }
+        }
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+function generateSolvedBoard() {
+  const board = Array(SUDOKU.GRID_SIZE).fill(null).map(() => 
+    Array(SUDOKU.GRID_SIZE).fill(0)
+  );
+  
+  fillBoard(board);
+  return board;
+}
+
+function generateInitialBoard(difficultyLevel) {
+  const filledCells = DIFFICULTY_SETTINGS[difficultyLevel]?.filledCells || 30;
+  const solvedBoard = generateSolvedBoard();
+  
+  const newBoard = [];
+  const totalCells = SUDOKU.GRID_SIZE * SUDOKU.GRID_SIZE;
+  const cellsToRemove = totalCells - filledCells;
+  
+  const positions = [];
+  for (let row = 0; row < SUDOKU.GRID_SIZE; row++) {
+    for (let col = 0; col < SUDOKU.GRID_SIZE; col++) {
+      positions.push({ row, col });
+    }
+  }
+  
+  shuffleArray(positions);
+  
+  const cellsToRemoveSet = new Set();
+  for (let i = 0; i < cellsToRemove; i++) {
+    const pos = positions[i];
+    cellsToRemoveSet.add(`${pos.row}-${pos.col}`);
+  }
+  
+  for (let row = 0; row < SUDOKU.GRID_SIZE; row++) {
+    const rowCells = [];
+    for (let col = 0; col < SUDOKU.GRID_SIZE; col++) {
+      const key = `${row}-${col}`;
+      const isPreFilled = !cellsToRemoveSet.has(key);
+      
+      rowCells.push({
+        id: `cell-${row}-${col}`,
+        value: isPreFilled ? solvedBoard[row][col] : SUDOKU.EMPTY_CELL,
+        isEditable: !isPreFilled,
+        rowIndex: row,
+        colIndex: col,
+      });
+    }
+    newBoard.push(rowCells);
+  }
+  return newBoard;
+}
+
 const useSudokuBoard = (difficulty = "medium") => {
   const [board, setBoard] = useState(() => generateInitialBoard(difficulty));
-
-  function generateInitialBoard(difficultyLevel) {
-    const filledCells = DIFFICULTY_SETTINGS[difficultyLevel]?.filledCells || 30;
-    const totalCells = SUDOKU.GRID_SIZE * SUDOKU.GRID_SIZE;
-    const fillProbability = filledCells / totalCells;
-
-    const newBoard = [];
-    for (let row = 0; row < SUDOKU.GRID_SIZE; row++) {
-      const rowCells = [];
-      for (let col = 0; col < SUDOKU.GRID_SIZE; col++) {
-        const isPreFilled = Math.random() < fillProbability;
-        const value = isPreFilled
-          ? Math.floor(Math.random() * SUDOKU.MAX_VALUE) + 1
-          : SUDOKU.EMPTY_CELL;
-
-        rowCells.push({
-          id: `cell-${row}-${col}`,
-          value: value,
-          isEditable: !isPreFilled,
-          rowIndex: row,
-          colIndex: col,
-        });
-      }
-      newBoard.push(rowCells);
-    }
-    return newBoard;
-  }
 
   const updateCell = useCallback((rowIndex, colIndex, value) => {
     setBoard((prevBoard) => {

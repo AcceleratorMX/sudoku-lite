@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Grid, Button } from "../index.jsx";
+import { Grid, Button, GameCompletionDialog } from "../index.jsx";
 import { useTimer, useSudokuBoard, useGameStats } from "../../hooks";
 import { formatTime } from "../../utils/formatTime";
 import { DIFFICULTY_SETTINGS } from "../../constants";
@@ -31,35 +31,13 @@ const SudokuGame = ({
   useEffect(() => {
     if (isBoardComplete() && !stats.isCompleted) {
       completeGame();
-
-      if (onGameComplete) {
-        const finalScore = calculateFinalScore(
-          time,
-          stats.moves,
-          stats.mistakes
-        );
-        onGameComplete({
-          playerName: playerName,
-          score: finalScore,
-          time: time,
-          moves: stats.moves,
-          mistakes: stats.mistakes,
-          difficulty: difficultyLabel,
-        });
-      }
+      // Не викликаємо onGameComplete тут - тільки при натисканні "View Results"
     }
   }, [
     board,
     isBoardComplete,
     stats.isCompleted,
     completeGame,
-    onGameComplete,
-    calculateFinalScore,
-    time,
-    stats.moves,
-    stats.mistakes,
-    playerName,
-    difficultyLabel,
   ]);
 
   const handleCellChange = (rowIndex, colIndex, value) => {
@@ -84,6 +62,26 @@ const SudokuGame = ({
 
   const handlePause = () => {
     togglePause();
+  };
+
+  const handlePlayAgain = () => {
+    handleNewGame();
+  };
+
+  const handleRestart = () => {
+    handleNewGame();
+  };
+
+  const handleViewResults = () => {
+    const finalScore = calculateFinalScore(time, stats.moves, stats.mistakes);
+    onGameComplete({
+      playerName: playerName,
+      score: finalScore,
+      time: time,
+      moves: stats.moves,
+      mistakes: stats.mistakes,
+      difficulty: difficultyLabel,
+    });
   };
 
   return (
@@ -119,7 +117,7 @@ const SudokuGame = ({
             {stats.isPaused ? "Resume" : "Pause"}
           </Button>
           <Button variant="primary" size="small" onClick={handleNewGame}>
-            New Game
+            Reset
           </Button>
         </div>
       </div>
@@ -130,11 +128,16 @@ const SudokuGame = ({
         </div>
       )}
 
-      {stats.isCompleted && (
-        <div className="sudoku-game__completion">
-          🎉 Congratulations! You completed the puzzle in {stats.moves} moves!
-        </div>
-      )}
+      <GameCompletionDialog
+        isOpen={stats.isCompleted}
+        playerName={playerName}
+        difficulty={difficultyLabel}
+        time={formatTime(time)}
+        errors={stats.mistakes}
+        onPlayAgain={handlePlayAgain}
+        onRestart={handleRestart}
+        onViewResults={handleViewResults}
+      />
 
       <div className="sudoku-game__grid">
         <Grid
@@ -148,30 +151,6 @@ const SudokuGame = ({
         <Button variant="secondary" size="medium" onClick={onBackToStart}>
           Exit
         </Button>
-
-        {stats.isCompleted && (
-          <Button
-            variant="success"
-            size="large"
-            onClick={() => {
-              const finalScore = calculateFinalScore(
-                time,
-                stats.moves,
-                stats.mistakes
-              );
-              onGameComplete({
-                playerName: playerName,
-                score: finalScore,
-                time: time,
-                moves: stats.moves,
-                mistakes: stats.mistakes,
-                difficulty: difficultyLabel,
-              });
-            }}
-          >
-            View Results
-          </Button>
-        )}
       </div>
     </div>
   );

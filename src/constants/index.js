@@ -28,22 +28,22 @@ export const DIFFICULTY_SETTINGS = {
     [DIFFICULTY_LEVELS.EASY]: {
         label: 'Easy',
         filledCells: 40,
-        description: '40-45 cells filled'
+        description: '40 cells filled'
     },
     [DIFFICULTY_LEVELS.MEDIUM]: {
         label: 'Medium',
         filledCells: 30,
-        description: '30-35 cells filled'
+        description: '30 cells filled'
     },
     [DIFFICULTY_LEVELS.HARD]: {
         label: 'Hard',
         filledCells: 25,
-        description: '25-28 cells filled'
+        description: '25 cells filled'
     },
     [DIFFICULTY_LEVELS.EXPERT]: {
         label: 'Expert',
         filledCells: 20,
-        description: '20-22 cells filled'
+        description: '20 cells filled'
     }
 };
 
