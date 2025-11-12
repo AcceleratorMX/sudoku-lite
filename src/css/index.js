@@ -4,10 +4,9 @@ import GamePageStyles from "./pages/Game.module.css";
 import ScoresPageStyles from "./pages/Scores.module.css";
 
 import ButtonStyles from "./components/ui/Button.module.css";
-import GameSettingsFormStyles from "./components/ui/GameSettingsForm.module.css";
+import DifficultyStyles from "./components/ui/Difficulty.module.css";
 import StartFormStyles from "./components/ui/StartForm.module.css";
 import ScoresListStyles from "./components/ui/ScoresList.module.css";
-import PlayerNameFormStyles from "./components/ui/PlayerNameForm.module.css";
 import PlayerStyles from "./components/ui/Player.module.css";
 import GameCompletionDialogStyles from "./components/ui/GameCompletionDialog.module.css";
 
@@ -26,10 +25,9 @@ export const pages = {
 export const components = {
   ui: {
     Button: ButtonStyles,
-    GameSettingsForm: GameSettingsFormStyles,
+    Difficulty: DifficultyStyles,
     StartForm: StartFormStyles,
     ScoresList: ScoresListStyles,
-    PlayerNameForm: PlayerNameFormStyles,
     Player: PlayerStyles,
     GameCompletionDialog: GameCompletionDialogStyles,
   },
@@ -42,10 +40,9 @@ export const components = {
 
 export const {
   Button,
-  GameSettingsForm,
+  Difficulty,
   StartForm,
   ScoresList,
-  PlayerNameForm,
   Player,
   GameCompletionDialog,
 } = components.ui;

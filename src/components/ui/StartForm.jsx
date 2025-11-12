@@ -1,15 +1,34 @@
 import { useForm } from "react-hook-form";
-import { NAME_VALIDATION } from "../../constants/index.js";
-import { Button } from "../index.jsx";
-import GameSettingsForm from "./GameSettingsForm.jsx";
+import { useState } from "react";
+import { NAME_VALIDATION, DIFFICULTY_LEVELS } from "../../constants/index.js";
+import { Button, Difficulty } from "../index.jsx";
+import { classNames } from "../../utils/classNames.js";
 import { StartForm as styles } from "../../css";
 
+/**
+ * StartForm Component
+ * 
+ * Main form for starting a new game.
+ * Collects player name and game difficulty settings.
+ * 
+ * Uses react-hook-form for name validation and state management.
+ * Game settings are managed separately as they're stored independently.
+ * 
+ * @param {Function} onSubmit - Callback when form is submitted with player name
+ * @param {Function} onSettingsChange - Callback when game settings change
+ * @param {Object} initialSettings - Initial game settings (difficulty, etc.)
+ * @param {string} className - Additional CSS classes
+ */
 const StartForm = ({
   onSubmit,
   onSettingsChange,
   initialSettings,
   className = "",
 }) => {
+  const [difficulty, setDifficulty] = useState(
+    initialSettings?.difficulty || DIFFICULTY_LEVELS.MEDIUM
+  );
+
   const {
     register,
     handleSubmit,
@@ -21,20 +40,31 @@ const StartForm = ({
     },
   });
 
+  /**
+   * Handle form submission
+   * @param {Object} data - Form data from react-hook-form
+   */
   const onSubmitForm = (data) => {
     onSubmit(data.playerName.trim());
   };
 
-  const rootClassName = [styles.startForm, className]
-    .filter(Boolean)
-    .join(" ");
+  /**
+   * Handle difficulty change
+   * @param {string} newDifficulty - Selected difficulty level
+   */
+  const handleDifficultyChange = (newDifficulty) => {
+    setDifficulty(newDifficulty);
+    if (onSettingsChange) {
+      onSettingsChange({ difficulty: newDifficulty });
+    }
+  };
 
-  const inputClassName = [
+  const rootClassName = classNames(styles.startForm, className);
+
+  const inputClassName = classNames(
     styles.input,
-    errors.playerName ? styles.inputError : "",
-  ]
-    .filter(Boolean)
-    .join(" ");
+    errors.playerName && styles.inputError
+  );
 
   return (
     <form className={rootClassName} onSubmit={handleSubmit(onSubmitForm)}>
@@ -67,9 +97,9 @@ const StartForm = ({
           )}
         </div>
 
-        <GameSettingsForm
-          onSettingsChange={onSettingsChange}
-          initialSettings={initialSettings}
+        <Difficulty
+          onChange={handleDifficultyChange}
+          value={difficulty}
           className={styles.settings}
         />
       </div>
