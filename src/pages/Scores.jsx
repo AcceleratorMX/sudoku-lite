@@ -1,12 +1,30 @@
-import { useEffect, useState } from "react";
-import { Button, ScoresList } from "../components/index.jsx";
-import { formatTime } from "../utils/formatTime.js";
-import { useLocalStorage } from "../hooks";
+import { useParams } from "react-router-dom";
+import { Button, ScoresList } from "../components/index";
+import { formatTime, getScoreGrade } from "../utils";
+import { usePlayerSession, useScoreManager } from "../hooks";
+import { gameStorageService } from "../services";
+import { Scores as styles } from "../css";
 
-const Scores = ({ onPlayAgain, onBackToStart, gameResults }) => {
-  const [allScores, setAllScores] = useLocalStorage("sudoku-scores", []);
-  const [currentPlayerRank, setCurrentPlayerRank] = useState(null);
+/**
+ * Scores Page Component
+ *
+ * Displays game results and leaderboard:
+ * - Shows current game results
+ * - Displays player ranking
+ * - Shows top 10 leaderboard
+ * - Provides navigation options
+ *
+ * Now uses useScoreManager hook for all scoring logic
+ * and service layer for storage operations.
+ */
+const Scores = () => {
+  const { playerId } = useParams();
+  const { navigateToStart } = usePlayerSession();
 
+  // Load game results using service
+  const gameResults = gameStorageService.getGameResults(playerId);
+
+  // Use default results if no game results found
   const results = gameResults || {
     playerName: "Player",
     score: 750,
@@ -16,154 +34,94 @@ const Scores = ({ onPlayAgain, onBackToStart, gameResults }) => {
     difficulty: "Medium",
   };
 
-  useEffect(() => {
-    if (gameResults) {
-      const newScore = {
-        id: Date.now(),
-        name: results.playerName,
-        score: results.score,
-        time: results.time,
-        moves: results.moves,
-        mistakes: results.mistakes,
-        difficulty: results.difficulty,
-        date: new Date().toISOString(),
-      };
+  // Manage scores and leaderboard
+  const { currentPlayerRank, getTopPlayers, getCurrentPlayer } =
+    useScoreManager(gameResults);
 
-      const alreadyExists = allScores.some(
-        (s) =>
-          s.name === newScore.name &&
-          s.score === newScore.score &&
-          s.time === newScore.time &&
-          Math.abs(
-            new Date(s.date).getTime() - new Date(newScore.date).getTime()
-          ) < 5000
-      );
-
-      if (!alreadyExists) {
-        const updatedScores = [...allScores, newScore];
-
-        updatedScores.sort((a, b) => b.score - a.score);
-
-        const topScores = updatedScores.slice(0, 100);
-
-        setAllScores(topScores);
-
-        const rank = topScores.findIndex((s) => s.id === newScore.id) + 1;
-        setCurrentPlayerRank(rank);
-      } else {
-        // Якщо вже існує, просто знаходимо ранк
-        const existingScore = allScores.find(
-          (s) => s.name === results.playerName && s.score === results.score
-        );
-        if (existingScore) {
-          const rank =
-            allScores.findIndex((s) => s.id === existingScore.id) + 1;
-          setCurrentPlayerRank(rank);
-        }
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gameResults]);
-
-  const getScoreGrade = (score) => {
-    if (score >= 900) return "Excellent!";
-    if (score >= 700) return "Great!";
-    if (score >= 500) return "Good!";
-    return "Try Again!";
+  /**
+   * Navigate to game page to play again
+   */
+  const handlePlayAgain = () => {
+    window.location.href = `/game/${playerId}`;
   };
 
-  const topPlayers = allScores.slice(0, 10).map((score, index) => ({
-    id: score.id,
-    rank: index + 1,
-    name: score.name,
-    score: score.score,
-  }));
+  /**
+   * Clean up and return to start page
+   */
+  const handleBackToStart = () => {
+    gameStorageService.clearPlayerData(playerId);
+    navigateToStart();
+  };
 
-  const currentPlayer = currentPlayerRank
-    ? {
-        id: Date.now(),
-        rank: currentPlayerRank,
-        name: results.playerName,
-        score: results.score,
-      }
-    : null;
+  // Get top 10 players for leaderboard
+  const topPlayers = getTopPlayers(10);
+
+  // Get current player info if ranked
+  const currentPlayer = getCurrentPlayer(results.playerName);
+
+  const primaryScoreClass = [styles.statValue, styles.statValuePrimary]
+    .filter(Boolean)
+    .join(" ");
 
   return (
-    <div className="scores-page">
-      <div className="scores-page__container">
-        <h1 className="scores-page__title">Game Completed!</h1>
-
-        <div className="scores-page__results">
-          <div className="scores-page__player">
-            <h2 className="scores-page__player-name">{results.playerName}</h2>
-            <div className="scores-page__grade">
-              {getScoreGrade(results.score)}
-            </div>
+    <div className={styles.scoresPage}>
+      <div className={styles.container}>
+        <h1 className={styles.title}>Game Completed!</h1>
+        <div className={styles.results}>
+          <div className={styles.player}>
+            <h2 className={styles.playerName}>{results.playerName}</h2>
+            <div className={styles.grade}>{getScoreGrade(results.score)}</div>
             {currentPlayerRank && (
-              <div className="scores-page__rank">
-                Rank: #{currentPlayerRank}
-              </div>
+              <div className={styles.rank}>Rank: #{currentPlayerRank}</div>
             )}
           </div>
-
-          <div className="scores-page__stats">
-            <div className="scores-page__stat-group">
-              <div className="scores-page__stat">
-                <span className="scores-page__stat-label">Final Score</span>
-                <span className="scores-page__stat-value scores-page__stat-value--primary">
-                  {results.score}
-                </span>
+          <div className={styles.stats}>
+            <div className={styles.statGroup}>
+              <div className={styles.stat}>
+                <span className={styles.statLabel}>Final Score</span>
+                <span className={primaryScoreClass}>{results.score}</span>
               </div>
-
-              <div className="scores-page__stat">
-                <span className="scores-page__stat-label">Time</span>
-                <span className="scores-page__stat-value">
+              <div className={styles.stat}>
+                <span className={styles.statLabel}>Time</span>
+                <span className={styles.statValue}>
                   {formatTime(results.time)}
                 </span>
               </div>
-
-              <div className="scores-page__stat">
-                <span className="scores-page__stat-label">Moves</span>
-                <span className="scores-page__stat-value">{results.moves}</span>
+              <div className={styles.stat}>
+                <span className={styles.statLabel}>Moves</span>
+                <span className={styles.statValue}>{results.moves}</span>
               </div>
-
-              <div className="scores-page__stat">
-                <span className="scores-page__stat-label">Mistakes</span>
-                <span className="scores-page__stat-value">
+              <div className={styles.stat}>
+                <span className={styles.statLabel}>Mistakes</span>
+                <span className={styles.statValue}>
                   {results.mistakes || 0}
                 </span>
               </div>
-
-              <div className="scores-page__stat">
-                <span className="scores-page__stat-label">Difficulty</span>
-                <span className="scores-page__stat-value">
-                  {results.difficulty}
-                </span>
+              <div className={styles.stat}>
+                <span className={styles.statLabel}>Difficulty</span>
+                <span className={styles.statValue}>{results.difficulty}</span>
               </div>
             </div>
           </div>
         </div>
-
-        <div className="scores-page__actions">
+        <div className={styles.actions}>
           <Button
             variant="primary"
             size="large"
-            onClick={onPlayAgain}
-            className="scores-page__action-button"
+            onClick={handlePlayAgain}
+            className={styles.actionButton}
           >
             Play Again
           </Button>
-
           <Button
             variant="secondary"
             size="large"
-            onClick={onBackToStart}
-            className="scores-page__action-button"
+            onClick={handleBackToStart}
+            className={styles.actionButton}
           >
             Exit
           </Button>
         </div>
-
         {topPlayers.length > 0 && (
           <ScoresList
             title="Top Scores"

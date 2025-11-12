@@ -1,0 +1,19 @@
+.grid {
+    display: inline-block;
+    background: var(--bg-primary);
+    padding: 20px;
+    border-radius: var(--radius-large);
+    box-shadow: var(--shadow-heavy);
+    border: var(--cell-border-thick) solid var(--text-primary);
+}
+
+.row {
+    display: flex;
+}
+
+.loading {
+    padding: 40px;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}

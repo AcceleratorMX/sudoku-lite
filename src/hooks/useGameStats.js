@@ -1,5 +1,32 @@
 import { useState, useCallback } from 'react';
 
+/**
+ * Custom hook for managing game statistics and state
+ * 
+ * Manages:
+ * - Move counter
+ * - Mistake counter
+ * - Score tracking
+ * - Game completion state
+ * - Game pause state
+ * 
+ * Note: Score calculation logic has been moved to utils/score/calculateScore
+ * This hook only manages the state, not the calculation logic.
+ * 
+ * @param {Object|null} initialStats - Optional initial statistics to restore saved game
+ * @param {number} initialStats.moves - Initial move count
+ * @param {number} initialStats.mistakes - Initial mistake count
+ * @param {number} initialStats.score - Initial score
+ * @param {boolean} initialStats.isCompleted - Initial completion state
+ * @param {boolean} initialStats.isPaused - Initial pause state
+ * @returns {Object} Stats object and methods to manipulate them
+ * 
+ * @example
+ * const { stats, incrementMoves, incrementMistakes, completeGame } = useGameStats();
+ * incrementMoves(); // stats.moves++
+ * incrementMistakes(); // stats.mistakes++
+ * completeGame(); // stats.isCompleted = true
+ */
 const useGameStats = (initialStats = null) => {
     const [stats, setStats] = useState(initialStats || {
         moves: 0,
@@ -9,6 +36,9 @@ const useGameStats = (initialStats = null) => {
         isPaused: false
     });
 
+    /**
+     * Increment the moves counter by 1
+     */
     const incrementMoves = useCallback(() => {
         setStats(prev => ({
             ...prev,
@@ -16,6 +46,9 @@ const useGameStats = (initialStats = null) => {
         }));
     }, []);
 
+    /**
+     * Increment the mistakes counter by 1
+     */
     const incrementMistakes = useCallback(() => {
         setStats(prev => ({
             ...prev,
@@ -23,6 +56,10 @@ const useGameStats = (initialStats = null) => {
         }));
     }, []);
 
+    /**
+     * Update the score value
+     * @param {number} newScore - New score value
+     */
     const updateScore = useCallback((newScore) => {
         setStats(prev => ({
             ...prev,
@@ -30,20 +67,9 @@ const useGameStats = (initialStats = null) => {
         }));
     }, []);
 
-    const calculateFinalScore = useCallback((time, moves, mistakes) => {
-        let score = 1000;
-        
-        const timeOver180 = Math.max(0, time - 180);
-        score -= timeOver180;
-        
-        const movesOver81 = Math.max(0, moves - 81);
-        score -= movesOver81 * 2;
-        
-        score -= mistakes * 50;
-        
-        return Math.max(0, score);
-    }, []);
-
+    /**
+     * Mark the game as completed
+     */
     const completeGame = useCallback(() => {
         setStats(prev => ({
             ...prev,
@@ -51,6 +77,9 @@ const useGameStats = (initialStats = null) => {
         }));
     }, []);
 
+    /**
+     * Toggle the pause state between paused and unpaused
+     */
     const togglePause = useCallback(() => {
         setStats(prev => ({
             ...prev,
@@ -58,6 +87,9 @@ const useGameStats = (initialStats = null) => {
         }));
     }, []);
 
+    /**
+     * Reset all statistics to initial values
+     */
     const resetStats = useCallback(() => {
         setStats({
             moves: 0,
@@ -68,6 +100,10 @@ const useGameStats = (initialStats = null) => {
         });
     }, []);
 
+    /**
+     * Restore statistics from saved game state
+     * @param {Object} savedStats - Previously saved statistics object
+     */
     const restoreStats = useCallback((savedStats) => {
         if (savedStats) {
             setStats(savedStats);
@@ -79,7 +115,6 @@ const useGameStats = (initialStats = null) => {
         incrementMoves,
         incrementMistakes,
         updateScore,
-        calculateFinalScore,
         completeGame,
         togglePause,
         resetStats,

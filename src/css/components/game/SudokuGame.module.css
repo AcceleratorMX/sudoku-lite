@@ -1,0 +1,138 @@
+.game {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    position: relative;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
+    margin-bottom: 10px;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.player {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.difficulty {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.stats {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.statLabel {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 2px;
+}
+
+.statValue {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--text-primary);
+}
+
+.completion {
+    background: var(--secondary-color);
+    color: var(--bg-primary);
+    padding: 8px 16px;
+    border-radius: var(--radius-medium);
+    font-weight: bold;
+    animation: celebration 0.5s ease-in-out;
+}
+
+@keyframes celebration {
+    0% { transform: scale(0.8); opacity: 0; }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+}
+
+.grid {
+    margin: 10px 0;
+}
+
+.saveInfo {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 10px;
+}
+
+.loading {
+    padding: 60px;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+}
+
+.pauseOverlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.75);
+    color: var(--bg-primary);
+    padding: 20px 32px;
+    border-radius: var(--radius-medium);
+    font-size: 1.4rem;
+    font-weight: 600;
+    z-index: 5;
+}
+
+.pauseMessage {
+    margin: 0;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+@media (max-width: 600px) {
+    .header {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .stats {
+        gap: 15px;
+    }
+
+    .actions {
+        flex-direction: column;
+        width: 100%;
+        max-width: 200px;
+    }
+}

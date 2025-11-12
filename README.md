@@ -80,27 +80,36 @@ Your final score is calculated based on the following formula:
 - **Pause functionality** - Pause and resume the game anytime
 - **Game completion dialog** - Modal dialog using React Portal
 - **Form validation** - Using react-hook-form for player settings
-- **Auto-save on change** - Game state automatically saved on every move
+- **Auto-save** - Game state automatically saved on every move with debouncing
 - **Resume on refresh** - Continue your game after page reload
 - **Responsive design** - Works on desktop and mobile devices
+- **Optimized performance** - Using React.memo for frequently re-rendered components
 
 ## 📁 Project Structure
 
 ```text
 src/
-├── components/       # Reusable UI components
-│   ├── game/        # Game-specific components (Cell, Grid, SudokuGame)
-│   └── ui/          # UI components (Button, Player, Forms, Portal, Dialogs)
-├── pages/           # Page components (Start, Game, Scores)
-├── hooks/           # Custom React hooks
-│   ├── useTimer.js          # Timer management with initial time support
-│   ├── useSudokuBoard.js    # Board generation, validation, and state
-│   ├── useGameStats.js      # Game statistics tracking
-│   ├── useLocalStorage.js   # localStorage integration
-│   └── useGameState.js      # App state persistence
-├── constants/       # App constants and configuration
-├── utils/          # Utility functions (formatTime, etc.)
-└── css/            # Stylesheets
+├── components/             # Reusable UI components
+│   ├── common/            # Shared components (Button, Portal)
+│   ├── forms/             # Form components (StartForm, Difficulty)
+│   ├── leaderboard/       # Leaderboard components (Player, ScoresList)
+│   └── game/              # Game components (Cell, Grid, SudokuGame, GameHeader, GameStats, GameControls, PauseOverlay, GameCompletionDialog)
+├── pages/                 # Page components (Start, Game, Scores)
+├── routes/                # Routing configuration
+├── hooks/                 # Custom React hooks
+├── services/              # Business logic services
+│   ├── storage/           # LocalStorage operations (StorageService, GameStorageService)
+│   └── sudoku/            # Sudoku generation and solving algorithms
+├── constants/             # App constants and configuration
+├── utils/                 # Utility functions
+├── css/                   # Stylesheets
+│   ├── components/        # Component styles (organized by component structure)
+│   │   ├── common/        # Common component styles
+│   │   ├── forms/         # Form component styles
+│   │   ├── game/          # Game component styles
+│   │   └── leaderboard/   # Leaderboard component styles
+│   └── pages/             # Page styles
+└── assets/                # Static assets
 ```
 
 ## 🎯 Custom Hooks
@@ -111,7 +120,22 @@ The application uses custom hooks to keep components clean and separate business
 - **`useSudokuBoard`** - Handles valid sudoku generation, validation, cell updates, and state restoration
 - **`useGameStats`** - Tracks moves, mistakes, calculates final score, and supports state restoration
 - **`useLocalStorage`** - Manages persistent storage with get/set/remove operations
-- **`useGameState`** - Manages entire app state persistence (current page, player data, game progress)
+- **`useGameState`** - Manages complete app state (current page, player data, game progress)
+- **`useGamePersistence`** - Handles game state persistence and auto-save with debouncing
+- **`usePlayerSession`** - Manages player session (ID generation, name storage, session tracking)
+- **`useScoreManager`** - Score tracking, saving, and leaderboard management
+
+## 🏗️ Architecture
+
+The project follows **SOLID principles** and **separation of concerns**:
+
+- **Services Layer** - Business logic separated from UI (SudokuGenerator, StorageService, GameStorageService)
+- **Custom Hooks** - Reusable stateful logic
+- **Component Organization** - Components grouped by feature (common, forms, leaderboard, game)
+- **Barrel Exports** - Clean import paths through index.js files
+- **Performance Optimization** - React.memo applied to frequently re-rendered components (Cell, Player, GameStats, PauseOverlay)
+- **Utility Functions** - Pure functions for calculations and formatting
+- **CSS Modules** - Scoped styling matching component structure
 
 ## 🛠️ Technologies
 
