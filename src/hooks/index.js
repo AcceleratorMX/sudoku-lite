@@ -5,3 +5,4 @@ export { default as useLocalStorage } from './useLocalStorage';
 export { useGameState } from './useGameState';
 export { default as usePlayerSession } from './usePlayerSession';
 export { default as useGamePersistence, useLoadSavedGame } from './useGamePersistence';
+export { default as useScoreManager } from './useScoreManager';

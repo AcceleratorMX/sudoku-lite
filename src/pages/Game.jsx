@@ -1,45 +1,69 @@
-﻿import { useParams, useNavigate } from "react-router-dom";
+﻿import { useParams } from "react-router-dom";
 import { SudokuGame } from "../components/index.jsx";
+import { usePlayerSession } from "../hooks";
+import { gameStorageService } from "../services/storage";
 import { Game as styles } from "../css";
 
+/**
+ * Game Page Component
+ *
+ * Main game page that:
+ * - Loads player data and saved game
+ * - Renders SudokuGame component
+ * - Handles game completion and navigation
+ *
+ * Now uses service layer for storage operations instead of
+ * direct localStorage manipulation.
+ */
 const Game = () => {
   const { playerId } = useParams();
-  const navigate = useNavigate();
-  
-  const playerDataStr = localStorage.getItem(`sudoku-player-${playerId}`);
-  const playerData = playerDataStr ? JSON.parse(playerDataStr) : {
+  const { navigateToScores, navigateToStart } = usePlayerSession();
+
+  // Load player data using service
+  const playerData = gameStorageService.getPlayerData(playerId) || {
     playerName: "Player",
-    gameSettings: { difficulty: "medium" }
+    gameSettings: { difficulty: "medium" },
   };
-  
-  const savedGameStr = localStorage.getItem(`sudoku-saved-game-${playerId}`);
-  const savedGame = savedGameStr ? JSON.parse(savedGameStr) : null;
 
+  // Load saved game using service
+  const savedGame = gameStorageService.getSavedGame(playerId);
+
+  /**
+   * Handle game completion
+   * Saves results and navigates to scores page
+   * @param {Object} gameResults - Final game results
+   */
   const handleGameComplete = (gameResults) => {
-    localStorage.setItem(`sudoku-game-results-${playerId}`, JSON.stringify(gameResults));
-    
-    localStorage.removeItem(`sudoku-saved-game-${playerId}`);
-    
-    // Перейти до сторінки результатів
-    navigate(`/scores/${playerId}`);
+    gameStorageService.saveGameResults(playerId, gameResults);
+    gameStorageService.removeSavedGame(playerId);
+    navigateToScores(playerId);
   };
 
+  /**
+   * Handle back to start navigation
+   * Clears saved game and returns to start page
+   */
   const handleBackToStart = () => {
-    localStorage.removeItem(`sudoku-saved-game-${playerId}`);
-    navigate("/");
+    gameStorageService.removeSavedGame(playerId);
+    navigateToStart();
   };
-  
+
+  /**
+   * Handle game progress saving
+   * @param {Array} board - Current board state
+   * @param {Object} stats - Current statistics
+   * @param {number} time - Elapsed time
+   */
   const handleSaveProgress = (board, stats, time) => {
     if (board === null) {
-      localStorage.removeItem(`sudoku-saved-game-${playerId}`);
+      gameStorageService.removeSavedGame(playerId);
     } else {
-      localStorage.setItem(`sudoku-saved-game-${playerId}`, JSON.stringify({
+      gameStorageService.saveGameProgress(playerId, {
         board,
         stats,
         time,
         difficulty: playerData.gameSettings?.difficulty,
-        timestamp: Date.now()
-      }));
+      });
     }
   };
 

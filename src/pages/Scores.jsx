@@ -1,20 +1,31 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Button, ScoresList } from "../components/index.jsx";
 import { formatTime } from "../utils/formatTime.js";
-import { useLocalStorage } from "../hooks";
+import { getScoreGrade } from "../utils/score";
+import { usePlayerSession, useScoreManager } from "../hooks";
+import { gameStorageService } from "../services/storage";
 import { Scores as styles } from "../css";
 
+/**
+ * Scores Page Component
+ *
+ * Displays game results and leaderboard:
+ * - Shows current game results
+ * - Displays player ranking
+ * - Shows top 10 leaderboard
+ * - Provides navigation options
+ *
+ * Now uses useScoreManager hook for all scoring logic
+ * and service layer for storage operations.
+ */
 const Scores = () => {
   const { playerId } = useParams();
-  const navigate = useNavigate();
-  
-  const [allScores, setAllScores] = useLocalStorage("sudoku-scores", []);
-  const [currentPlayerRank, setCurrentPlayerRank] = useState(null);
+  const { navigateToStart } = usePlayerSession();
 
-  const gameResultsStr = localStorage.getItem(`sudoku-game-results-${playerId}`);
-  const gameResults = gameResultsStr ? JSON.parse(gameResultsStr) : null;
-  
+  // Load game results using service
+  const gameResults = gameStorageService.getGameResults(playerId);
+
+  // Use default results if no game results found
   const results = gameResults || {
     playerName: "Player",
     score: 750,
@@ -24,87 +35,30 @@ const Scores = () => {
     difficulty: "Medium",
   };
 
-  useEffect(() => {
-    if (gameResults) {
-      const scoreId = `score_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
-      
-      const newScore = {
-        id: scoreId,
-        name: results.playerName,
-        score: results.score,
-        time: results.time,
-        moves: results.moves,
-        mistakes: results.mistakes,
-        difficulty: results.difficulty,
-        date: new Date().toISOString(),
-      };
+  // Manage scores and leaderboard
+  const { currentPlayerRank, getTopPlayers, getCurrentPlayer } =
+    useScoreManager(gameResults);
 
-      const existingPlayerScoreIndex = allScores.findIndex(
-        (s) => s.name === newScore.name
-      );
-
-      let updatedScores;
-
-      if (existingPlayerScoreIndex !== -1) {
-        const existingScore = allScores[existingPlayerScoreIndex];
-        
-        if (newScore.score > existingScore.score) {
-          updatedScores = [...allScores];
-          updatedScores[existingPlayerScoreIndex] = newScore;
-          updatedScores.sort((a, b) => b.score - a.score);
-          const topScores = updatedScores.slice(0, 100);
-          setAllScores(topScores);
-          const rank = topScores.findIndex((s) => s.name === newScore.name) + 1;
-          setCurrentPlayerRank(rank);
-        } else {
-          const rank = allScores.findIndex((s) => s.name === newScore.name) + 1;
-          setCurrentPlayerRank(rank);
-        }
-      } else {
-        updatedScores = [...allScores, newScore];
-        updatedScores.sort((a, b) => b.score - a.score);
-        const topScores = updatedScores.slice(0, 100);
-        setAllScores(topScores);
-        const rank = topScores.findIndex((s) => s.name === newScore.name) + 1;
-        setCurrentPlayerRank(rank);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gameResults]);
-
+  /**
+   * Navigate to game page to play again
+   */
   const handlePlayAgain = () => {
-    navigate(`/game/${playerId}`);
+    window.location.href = `/game/${playerId}`;
   };
 
+  /**
+   * Clean up and return to start page
+   */
   const handleBackToStart = () => {
-    localStorage.removeItem(`sudoku-game-results-${playerId}`);
-    localStorage.removeItem(`sudoku-player-${playerId}`);
-    localStorage.removeItem(`sudoku-saved-game-${playerId}`);
-    navigate("/");
+    gameStorageService.clearPlayerData(playerId);
+    navigateToStart();
   };
 
-  const getScoreGrade = (score) => {
-    if (score >= 900) return "Excellent!";
-    if (score >= 700) return "Great!";
-    if (score >= 500) return "Good!";
-    return "Try Again!";
-  };
+  // Get top 10 players for leaderboard
+  const topPlayers = getTopPlayers(10);
 
-  const topPlayers = allScores.slice(0, 10).map((score, index) => ({
-    id: score.id,
-    rank: index + 1,
-    name: score.name,
-    score: score.score,
-  }));
-
-  const currentPlayer = currentPlayerRank
-    ? {
-        id: Date.now(),
-        rank: currentPlayerRank,
-        name: results.playerName,
-        score: results.score,
-      }
-    : null;
+  // Get current player info if ranked
+  const currentPlayer = getCurrentPlayer(results.playerName);
 
   const primaryScoreClass = [styles.statValue, styles.statValuePrimary]
     .filter(Boolean)
@@ -130,7 +84,9 @@ const Scores = () => {
               </div>
               <div className={styles.stat}>
                 <span className={styles.statLabel}>Time</span>
-                <span className={styles.statValue}>{formatTime(results.time)}</span>
+                <span className={styles.statValue}>
+                  {formatTime(results.time)}
+                </span>
               </div>
               <div className={styles.stat}>
                 <span className={styles.statLabel}>Moves</span>
@@ -138,7 +94,9 @@ const Scores = () => {
               </div>
               <div className={styles.stat}>
                 <span className={styles.statLabel}>Mistakes</span>
-                <span className={styles.statValue}>{results.mistakes || 0}</span>
+                <span className={styles.statValue}>
+                  {results.mistakes || 0}
+                </span>
               </div>
               <div className={styles.stat}>
                 <span className={styles.statLabel}>Difficulty</span>
@@ -148,10 +106,20 @@ const Scores = () => {
           </div>
         </div>
         <div className={styles.actions}>
-          <Button variant="primary" size="large" onClick={handlePlayAgain} className={styles.actionButton}>
+          <Button
+            variant="primary"
+            size="large"
+            onClick={handlePlayAgain}
+            className={styles.actionButton}
+          >
             Play Again
           </Button>
-          <Button variant="secondary" size="large" onClick={handleBackToStart} className={styles.actionButton}>
+          <Button
+            variant="secondary"
+            size="large"
+            onClick={handleBackToStart}
+            className={styles.actionButton}
+          >
             Exit
           </Button>
         </div>
@@ -160,7 +128,9 @@ const Scores = () => {
             title="Top Scores"
             players={topPlayers}
             currentPlayer={currentPlayer}
-            showCurrentUserSeparately={currentPlayerRank && currentPlayerRank > 10}
+            showCurrentUserSeparately={
+              currentPlayerRank && currentPlayerRank > 10
+            }
           />
         )}
       </div>
