@@ -1,7 +1,7 @@
 ﻿import { useParams } from "react-router-dom";
-import { SudokuGame } from "../components/index.jsx";
+import { SudokuGame } from "../components/index";
 import { usePlayerSession } from "../hooks";
-import { gameStorageService } from "../services/storage";
+import { gameStorageService } from "../services";
 import { Game as styles } from "../css";
 
 /**

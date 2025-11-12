@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { gameStorageService } from '../services/storage';
-import { generatePlayerId } from '../utils/userUtils';
+import { gameStorageService } from '../services';
+import { generatePlayerId } from '../utils';
 
 /**
  * Custom hook for managing player session lifecycle

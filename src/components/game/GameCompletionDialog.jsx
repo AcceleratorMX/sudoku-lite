@@ -1,8 +1,25 @@
 import PropTypes from "prop-types";
-import Portal from "./Portal";
-import Button from "./Button";
+import { Portal, Button } from "../index";
 import { GameCompletionDialog as styles } from "../../css";
 
+/**
+ * GameCompletionDialog Component
+ * 
+ * Modal dialog displayed when the player completes the Sudoku game.
+ * Shows game statistics and provides options to play again, restart, or view results.
+ * Uses Portal for rendering outside the normal DOM hierarchy.
+ * 
+ * @param {Object} props - Component props
+ * @param {boolean} props.isOpen - Whether the dialog is visible
+ * @param {string} props.playerName - Name of the player who completed the game
+ * @param {string} props.difficulty - Difficulty level of the completed game
+ * @param {string} props.time - Formatted time taken to complete (e.g., "12:34")
+ * @param {number} props.errors - Number of mistakes made during the game
+ * @param {Function} props.onPlayAgain - Callback to start a new game with same settings
+ * @param {Function} props.onRestart - Callback to restart the current game
+ * @param {Function} props.onViewResults - Callback to view results/leaderboard
+ * @returns {JSX.Element|null} GameCompletionDialog component or null if not open
+ */
 const GameCompletionDialog = ({
   isOpen,
   playerName,
@@ -10,7 +27,6 @@ const GameCompletionDialog = ({
   time,
   errors,
   onPlayAgain,
-  onRestart,
   onViewResults,
 }) => {
   if (!isOpen) return null;
@@ -46,9 +62,6 @@ const GameCompletionDialog = ({
           <div className={styles.actions}>
             <Button onClick={onPlayAgain} variant="primary">
               Play Again
-            </Button>
-            <Button onClick={onRestart} variant="secondary">
-              New Game
             </Button>
             <Button onClick={onViewResults} variant="secondary">
               View Results

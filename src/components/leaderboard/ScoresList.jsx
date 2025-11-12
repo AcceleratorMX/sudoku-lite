@@ -1,6 +1,19 @@
-import { Player } from "../index.jsx";
+import { Player } from "../index";
 import { ScoresList as styles } from "../../css";
 
+/**
+ * ScoresList Component
+ * 
+ * Displays a list of players with their rankings and scores.
+ * Can optionally show the current player separately below the list.
+ * 
+ * @param {Object} props - Component props
+ * @param {string} props.title - Title for the leaderboard section
+ * @param {Array<Object>} props.players - Array of player objects to display
+ * @param {Object|null} [props.currentPlayer=null] - Current player object
+ * @param {boolean} [props.showCurrentUserSeparately=false] - Whether to show current user separately
+ * @returns {JSX.Element} ScoresList component
+ */
 const ScoresList = ({
     title,
     players,

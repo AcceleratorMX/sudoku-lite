@@ -1,4 +1,4 @@
-import { classNames } from "../../utils/classNames.js";
+import { classNames } from "../../utils";
 import { Button as styles } from "../../css";
 
 /**

@@ -33,8 +33,8 @@ const GameHeader = ({
   return (
     <div className={styles.header}>
       <div className={styles.info}>
-        <span className={styles.player}>{playerName}</span>
         <span className={styles.difficulty}>{difficulty}</span>
+        <span className={styles.player}>{playerName}</span>
       </div>
 
       <GameStats moves={moves} time={time} mistakes={mistakes} />

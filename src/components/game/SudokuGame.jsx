@@ -1,8 +1,7 @@
 import { useEffect } from "react";
 import { Grid, GameCompletionDialog, GameHeader, GameControls, PauseOverlay } from "../index";
 import { useTimer, useSudokuBoard, useGameStats } from "../../hooks";
-import { formatTime } from "../../utils/formatTime";
-import { calculateScore } from "../../utils/score";
+import { formatTime, calculateScore, classNames } from "../../utils";
 import { DIFFICULTY_SETTINGS } from "../../constants";
 import { SudokuGame as styles } from "../../css";
 
@@ -67,31 +66,28 @@ const SudokuGame = ({
     validSavedGame?.time || 0
   );
 
+  // Restore saved game on mount
   useEffect(() => {
     if (validSavedGame) {
-      if (validSavedGame.board) {
-        restoreBoard(validSavedGame.board);
-      }
-      if (validSavedGame.stats) {
-        restoreStats(validSavedGame.stats);
-      }
-      if (validSavedGame.time !== undefined) {
-        restoreTimer(validSavedGame.time);
-      }
+      if (validSavedGame.board) restoreBoard(validSavedGame.board);
+      if (validSavedGame.stats) restoreStats(validSavedGame.stats);
+      if (validSavedGame.time !== undefined) restoreTimer(validSavedGame.time);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Auto-save game progress with debounce
   useEffect(() => {
-    if (!stats.isCompleted && onSaveProgress && board) {
-      const timeoutId = setTimeout(() => {
-        onSaveProgress(board, stats, time);
-      }, 50);
+    if (stats.isCompleted || !onSaveProgress || !board) return;
+    
+    const timeoutId = setTimeout(() => {
+      onSaveProgress(board, stats, time);
+    }, 500);
 
-      return () => clearTimeout(timeoutId);
-    }
+    return () => clearTimeout(timeoutId);
   }, [board, stats, time, stats.isCompleted, onSaveProgress]);
 
+  // Check for game completion
   useEffect(() => {
     if (isBoardComplete() && !stats.isCompleted) {
       completeGame();
@@ -102,9 +98,7 @@ const SudokuGame = ({
     if (stats.isCompleted || stats.isPaused) return;
 
     const isValid = isValidPlacement(rowIndex, colIndex, value);
-
     updateCell(rowIndex, colIndex, value);
-
     incrementMoves();
 
     if (!isValid && value !== "") {
@@ -116,39 +110,23 @@ const SudokuGame = ({
     newGame();
     resetStats();
     resetTimer();
-    if (onSaveProgress) {
-      onSaveProgress(null, null, 0);
-    }
-  };
-
-  const handlePause = () => {
-    togglePause();
-  };
-
-  const handlePlayAgain = () => {
-    handleNewGame();
-  };
-
-  const handleRestart = () => {
-    handleNewGame();
+    onSaveProgress?.(null, null, 0);
   };
 
   const handleViewResults = () => {
     const finalScore = calculateScore(time, stats.moves, stats.mistakes);
     onGameComplete({
-      playerName: playerName,
+      playerName,
       score: finalScore,
-      time: time,
+      time,
       moves: stats.moves,
       mistakes: stats.mistakes,
       difficulty: difficultyLabel,
     });
   };
 
-  const rootClassName = [styles.game, className].filter(Boolean).join(" ");
-
   return (
-    <div className={rootClassName}>
+    <div className={classNames(styles.game, className)}>
       <GameHeader
         playerName={playerName}
         difficulty={difficultyLabel}
@@ -157,7 +135,7 @@ const SudokuGame = ({
         mistakes={stats.mistakes}
         isPaused={stats.isPaused}
         isCompleted={stats.isCompleted}
-        onPause={handlePause}
+        onPause={togglePause}
         onReset={handleNewGame}
       />
 
@@ -169,8 +147,8 @@ const SudokuGame = ({
         difficulty={difficultyLabel}
         time={formatTime(time)}
         errors={stats.mistakes}
-        onPlayAgain={handlePlayAgain}
-        onRestart={handleRestart}
+        onPlayAgain={handleNewGame}
+        onRestart={handleNewGame}
         onViewResults={handleViewResults}
       />
 

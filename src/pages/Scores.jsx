@@ -1,9 +1,8 @@
 import { useParams } from "react-router-dom";
-import { Button, ScoresList } from "../components/index.jsx";
-import { formatTime } from "../utils/formatTime.js";
-import { getScoreGrade } from "../utils/score";
+import { Button, ScoresList } from "../components/index";
+import { formatTime, getScoreGrade } from "../utils";
 import { usePlayerSession, useScoreManager } from "../hooks";
-import { gameStorageService } from "../services/storage";
+import { gameStorageService } from "../services";
 import { Scores as styles } from "../css";
 
 /**

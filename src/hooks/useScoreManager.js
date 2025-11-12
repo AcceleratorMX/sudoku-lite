@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { gameStorageService } from "../services/storage";
+import { gameStorageService } from "../services";
 
 /**
  * Custom hook for managing game scores and leaderboard

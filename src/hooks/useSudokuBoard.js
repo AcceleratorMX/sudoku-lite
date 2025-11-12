@@ -3,7 +3,7 @@ import { SUDOKU } from "../constants";
 import { 
   generatePuzzleBoard, 
   validateCellPlacement 
-} from "../services/sudoku";
+} from "../services";
 
 /**
  * Custom hook for managing Sudoku board state

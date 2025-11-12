@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { gameStorageService } from '../services/storage';
+import { gameStorageService } from '../services';
 
 /**
  * Custom hook for automatic game progress persistence

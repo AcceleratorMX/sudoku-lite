@@ -1,8 +1,8 @@
 ﻿import {
   DIFFICULTY_LEVELS,
   DIFFICULTY_SETTINGS,
-} from "../../constants/index.js";
-import { classNames } from "../../utils/classNames.js";
+} from "../../constants/index";
+import { classNames } from "../../utils";
 import { Difficulty as styles } from "../../css";
 
 /**

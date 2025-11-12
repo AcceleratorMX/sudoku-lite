@@ -1,8 +1,8 @@
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { NAME_VALIDATION, DIFFICULTY_LEVELS } from "../../constants/index.js";
-import { Button, Difficulty } from "../index.jsx";
-import { classNames } from "../../utils/classNames.js";
+import { NAME_VALIDATION, DIFFICULTY_LEVELS } from "../../constants/index";
+import { Button, Difficulty } from "../index";
+import { classNames } from "../../utils";
 import { StartForm as styles } from "../../css";
 
 /**

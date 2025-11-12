@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { SudokuGame as styles } from "../../css";
 
 /**
@@ -10,7 +11,7 @@ import { SudokuGame as styles } from "../../css";
  * @param {boolean} props.isVisible - Whether the overlay should be visible
  * @returns {JSX.Element|null} PauseOverlay component or null if not visible
  */
-const PauseOverlay = ({ isVisible }) => {
+const PauseOverlay = memo(({ isVisible }) => {
   if (!isVisible) return null;
 
   return (
@@ -18,6 +19,6 @@ const PauseOverlay = ({ isVisible }) => {
       <div className={styles.pauseMessage}>Game Paused</div>
     </div>
   );
-};
+});
 
 export default PauseOverlay;

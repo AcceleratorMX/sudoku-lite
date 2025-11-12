@@ -1,4 +1,4 @@
-import { Button } from "../index.jsx";
+import { Button } from "../index";
 import { SudokuGame as styles } from "../../css";
 
 /**

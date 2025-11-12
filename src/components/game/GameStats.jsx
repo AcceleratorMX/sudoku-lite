@@ -1,4 +1,5 @@
-import { formatTime } from "../../utils/formatTime";
+import { memo } from "react";
+import { formatTime } from "../../utils";
 import { SudokuGame as styles } from "../../css";
 
 /**
@@ -13,7 +14,7 @@ import { SudokuGame as styles } from "../../css";
  * @param {number} props.mistakes - Number of mistakes made
  * @returns {JSX.Element} GameStats component
  */
-const GameStats = ({ moves, time, mistakes }) => {
+const GameStats = memo(({ moves, time, mistakes }) => {
   return (
     <div className={styles.stats}>
       <div className={styles.stat}>
@@ -30,6 +31,6 @@ const GameStats = ({ moves, time, mistakes }) => {
       </div>
     </div>
   );
-};
+});
 
 export default GameStats;
