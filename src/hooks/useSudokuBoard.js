@@ -15,7 +15,6 @@ import {
  * - Generate new games
  * - Restore saved games
  * 
- * Note: Board generation logic has been moved to services/sudoku/SudokuGenerator
  * 
  * @param {string} difficulty - Game difficulty level
  * @param {Object[][]|null} initialBoard - Optional initial board state for restoring
