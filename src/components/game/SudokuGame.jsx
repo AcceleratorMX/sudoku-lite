@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Grid, Button, GameCompletionDialog } from "../index.jsx";
 import { useTimer, useSudokuBoard, useGameStats } from "../../hooks";
 import { formatTime } from "../../utils/formatTime";
+import { calculateScore } from "../../utils/score";
 import { DIFFICULTY_SETTINGS } from "../../constants";
 import { SudokuGame as styles } from "../../css";
 
@@ -33,7 +34,6 @@ const SudokuGame = ({
     stats,
     incrementMoves,
     incrementMistakes,
-    calculateFinalScore,
     completeGame,
     togglePause,
     resetStats,
@@ -43,7 +43,7 @@ const SudokuGame = ({
   const {
     time,
     reset: resetTimer,
-    setTime,
+    restore: restoreTimer,
   } = useTimer(
     !stats.isPaused && !stats.isCompleted,
     validSavedGame?.time || 0
@@ -58,7 +58,7 @@ const SudokuGame = ({
         restoreStats(validSavedGame.stats);
       }
       if (validSavedGame.time !== undefined) {
-        setTime(validSavedGame.time);
+        restoreTimer(validSavedGame.time);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -116,7 +116,7 @@ const SudokuGame = ({
   };
 
   const handleViewResults = () => {
-    const finalScore = calculateFinalScore(time, stats.moves, stats.mistakes);
+    const finalScore = calculateScore(time, stats.moves, stats.mistakes);
     onGameComplete({
       playerName: playerName,
       score: finalScore,
