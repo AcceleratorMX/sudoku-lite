@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Refactoring analysis (internal use only)
+refactoring-analysis.txt
