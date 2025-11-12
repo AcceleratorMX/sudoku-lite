@@ -1,11 +1,18 @@
-const Player = ({rank, name, score, isCurrentUser = false }) => {
-    const className = `scores-page__leaderboard-item ${isCurrentUser ? 'scores-page__leaderboard-item--current' : ''}`;
-    
+import { Player as styles } from "../../css";
+
+const Player = ({ rank, name, score, isCurrentUser = false }) => {
+    const playerClassName = [
+        styles.item,
+        isCurrentUser ? styles.current : "",
+    ]
+        .filter(Boolean)
+        .join(" ");
+
     return (
-        <div className={className}>
-            <span className="scores-page__leaderboard-rank">{rank}.</span>
-            <span className="scores-page__leaderboard-name">{name}</span>
-            <span className="scores-page__leaderboard-score">{score}</span>
+        <div className={playerClassName}>
+            <span className={styles.rank}>{rank}.</span>
+            <span className={styles.name}>{name}</span>
+            <span className={styles.score}>{score}</span>
         </div>
     );
 };

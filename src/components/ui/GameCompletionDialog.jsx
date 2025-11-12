@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import Portal from "./Portal";
 import Button from "./Button";
+import { GameCompletionDialog as styles } from "../../css";
 
 const GameCompletionDialog = ({
   isOpen,
@@ -16,33 +17,33 @@ const GameCompletionDialog = ({
 
   return (
     <Portal>
-      <div className="dialog-overlay">
-        <div className="dialog">
-          <div className="dialog__header">
-            <h2 className="dialog__title">Game completed!</h2>
+      <div className={styles.overlay}>
+        <div className={styles.dialog}>
+          <div className={styles.header}>
+            <h2 className={styles.title}>Game completed!</h2>
           </div>
 
-          <div className="dialog__content">
-            <p className="dialog__message">
+          <div className={styles.content}>
+            <p className={styles.message}>
               Congratulations, <strong>{playerName}</strong>!
             </p>
-            <p className="dialog__message">
+            <p className={styles.message}>
               You have successfully completed the game on <strong>{difficulty}</strong> level.
             </p>
 
-            <div className="dialog__stats">
-              <div className="dialog__stat">
-                <span className="dialog__stat-label">Time:</span>
-                <span className="dialog__stat-value">{time}</span>
+            <div className={styles.stats}>
+              <div className={styles.stat}>
+                <span className={styles.statLabel}>Time:</span>
+                <span className={styles.statValue}>{time}</span>
               </div>
-              <div className="dialog__stat">
-                <span className="dialog__stat-label">Mistakes:</span>
-                <span className="dialog__stat-value">{errors}</span>
+              <div className={styles.stat}>
+                <span className={styles.statLabel}>Mistakes:</span>
+                <span className={styles.statValue}>{errors}</span>
               </div>
             </div>
           </div>
 
-          <div className="dialog__actions">
+          <div className={styles.actions}>
             <Button onClick={onPlayAgain} variant="primary">
               Play Again
             </Button>

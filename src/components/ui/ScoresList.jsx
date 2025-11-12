@@ -1,11 +1,17 @@
-import {Player} from '../index.jsx';
+import { Player } from "../index.jsx";
+import { ScoresList as styles } from "../../css";
 
-const ScoresList = ({ title, players, currentPlayer = null, showCurrentUserSeparately = false }) => {
+const ScoresList = ({
+    title,
+    players,
+    currentPlayer = null,
+    showCurrentUserSeparately = false,
+}) => {
     return (
-        <div className="scores-page__leaderboard">
-            <h3 className="scores-page__leaderboard-title">{title}</h3>
-            <div className="scores-page__leaderboard-list">
-                {players.map(player => (
+        <div className={styles.leaderboard}>
+            <h3 className={styles.title}>{title}</h3>
+            <div className={styles.list}>
+                {players.map((player) => (
                     <Player
                         key={player.id}
                         id={player.id}
@@ -16,9 +22,9 @@ const ScoresList = ({ title, players, currentPlayer = null, showCurrentUserSepar
                     />
                 ))}
             </div>
-            
+
             {showCurrentUserSeparately && currentPlayer && (
-                <div className="scores-page__current-user">
+                <div className={styles.currentUser}>
                     <Player
                         key={currentPlayer.id}
                         id={currentPlayer.id}

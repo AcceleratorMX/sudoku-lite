@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Button, ScoresList } from "../components/index.jsx";
 import { formatTime } from "../utils/formatTime.js";
 import { useLocalStorage } from "../hooks";
+import { Scores as styles } from "../css";
 
 const Scores = () => {
   const { playerId } = useParams();
@@ -105,48 +106,52 @@ const Scores = () => {
       }
     : null;
 
+  const primaryScoreClass = [styles.statValue, styles.statValuePrimary]
+    .filter(Boolean)
+    .join(" ");
+
   return (
-    <div className="scores-page">
-      <div className="scores-page__container">
-        <h1 className="scores-page__title">Game Completed!</h1>
-        <div className="scores-page__results">
-          <div className="scores-page__player">
-            <h2 className="scores-page__player-name">{results.playerName}</h2>
-            <div className="scores-page__grade">{getScoreGrade(results.score)}</div>
+    <div className={styles.scoresPage}>
+      <div className={styles.container}>
+        <h1 className={styles.title}>Game Completed!</h1>
+        <div className={styles.results}>
+          <div className={styles.player}>
+            <h2 className={styles.playerName}>{results.playerName}</h2>
+            <div className={styles.grade}>{getScoreGrade(results.score)}</div>
             {currentPlayerRank && (
-              <div className="scores-page__rank">Rank: #{currentPlayerRank}</div>
+              <div className={styles.rank}>Rank: #{currentPlayerRank}</div>
             )}
           </div>
-          <div className="scores-page__stats">
-            <div className="scores-page__stat-group">
-              <div className="scores-page__stat">
-                <span className="scores-page__stat-label">Final Score</span>
-                <span className="scores-page__stat-value scores-page__stat-value--primary">{results.score}</span>
+          <div className={styles.stats}>
+            <div className={styles.statGroup}>
+              <div className={styles.stat}>
+                <span className={styles.statLabel}>Final Score</span>
+                <span className={primaryScoreClass}>{results.score}</span>
               </div>
-              <div className="scores-page__stat">
-                <span className="scores-page__stat-label">Time</span>
-                <span className="scores-page__stat-value">{formatTime(results.time)}</span>
+              <div className={styles.stat}>
+                <span className={styles.statLabel}>Time</span>
+                <span className={styles.statValue}>{formatTime(results.time)}</span>
               </div>
-              <div className="scores-page__stat">
-                <span className="scores-page__stat-label">Moves</span>
-                <span className="scores-page__stat-value">{results.moves}</span>
+              <div className={styles.stat}>
+                <span className={styles.statLabel}>Moves</span>
+                <span className={styles.statValue}>{results.moves}</span>
               </div>
-              <div className="scores-page__stat">
-                <span className="scores-page__stat-label">Mistakes</span>
-                <span className="scores-page__stat-value">{results.mistakes || 0}</span>
+              <div className={styles.stat}>
+                <span className={styles.statLabel}>Mistakes</span>
+                <span className={styles.statValue}>{results.mistakes || 0}</span>
               </div>
-              <div className="scores-page__stat">
-                <span className="scores-page__stat-label">Difficulty</span>
-                <span className="scores-page__stat-value">{results.difficulty}</span>
+              <div className={styles.stat}>
+                <span className={styles.statLabel}>Difficulty</span>
+                <span className={styles.statValue}>{results.difficulty}</span>
               </div>
             </div>
           </div>
         </div>
-        <div className="scores-page__actions">
-          <Button variant="primary" size="large" onClick={handlePlayAgain} className="scores-page__action-button">
+        <div className={styles.actions}>
+          <Button variant="primary" size="large" onClick={handlePlayAgain} className={styles.actionButton}>
             Play Again
           </Button>
-          <Button variant="secondary" size="large" onClick={handleBackToStart} className="scores-page__action-button">
+          <Button variant="secondary" size="large" onClick={handleBackToStart} className={styles.actionButton}>
             Exit
           </Button>
         </div>

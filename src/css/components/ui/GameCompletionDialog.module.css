@@ -1,0 +1,131 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.dialog {
+    background: var(--bg-primary);
+    border-radius: var(--radius-large);
+    box-shadow: var(--shadow-heavy);
+    max-width: 500px;
+    width: 100%;
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.header {
+    padding: 24px 24px 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.title {
+    font-size: 1.8rem;
+    color: var(--text-primary);
+    font-weight: bold;
+    margin: 0;
+    text-align: center;
+}
+
+.content {
+    padding: 24px;
+}
+
+.message {
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+    text-align: center;
+    line-height: 1.6;
+}
+
+.message:last-of-type {
+    margin-bottom: 24px;
+}
+
+.stats {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    padding: 20px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-medium);
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.statLabel {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.statValue {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.actions {
+    display: flex;
+    gap: 12px;
+    padding: 16px 24px 24px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.actions :global(button) {
+    min-width: 140px;
+}
+
+@media (max-width: 600px) {
+    .dialog {
+        margin: 0 10px;
+    }
+
+    .actions {
+        flex-direction: column;
+    }
+
+    .actions :global(button) {
+        width: 100%;
+    }
+
+    .stats {
+        flex-direction: column;
+        gap: 15px;
+    }
+}

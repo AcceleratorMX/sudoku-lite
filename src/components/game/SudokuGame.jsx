@@ -3,6 +3,7 @@ import { Grid, Button, GameCompletionDialog } from "../index.jsx";
 import { useTimer, useSudokuBoard, useGameStats } from "../../hooks";
 import { formatTime } from "../../utils/formatTime";
 import { DIFFICULTY_SETTINGS } from "../../constants";
+import { SudokuGame as styles } from "../../css";
 
 const SudokuGame = ({
   playerName = "Player",
@@ -126,30 +127,32 @@ const SudokuGame = ({
     });
   };
 
+  const rootClassName = [styles.game, className].filter(Boolean).join(" ");
+
   return (
-    <div className={`sudoku-game ${className}`}>
-      <div className="sudoku-game__header">
-        <div className="sudoku-game__info">
-          <span className="sudoku-game__player">{playerName}</span>
-          <span className="sudoku-game__difficulty">{difficultyLabel}</span>
+    <div className={rootClassName}>
+      <div className={styles.header}>
+        <div className={styles.info}>
+          <span className={styles.player}>{playerName}</span>
+          <span className={styles.difficulty}>{difficultyLabel}</span>
         </div>
 
-        <div className="sudoku-game__stats">
-          <div className="sudoku-game__stat">
-            <span className="sudoku-game__stat-label">Moves</span>
-            <span className="sudoku-game__stat-value">{stats.moves}</span>
+        <div className={styles.stats}>
+          <div className={styles.stat}>
+            <span className={styles.statLabel}>Moves</span>
+            <span className={styles.statValue}>{stats.moves}</span>
           </div>
-          <div className="sudoku-game__stat">
-            <span className="sudoku-game__stat-label">Time</span>
-            <span className="sudoku-game__stat-value">{formatTime(time)}</span>
+          <div className={styles.stat}>
+            <span className={styles.statLabel}>Time</span>
+            <span className={styles.statValue}>{formatTime(time)}</span>
           </div>
-          <div className="sudoku-game__stat">
-            <span className="sudoku-game__stat-label">Mistakes</span>
-            <span className="sudoku-game__stat-value">{stats.mistakes}</span>
+          <div className={styles.stat}>
+            <span className={styles.statLabel}>Mistakes</span>
+            <span className={styles.statValue}>{stats.mistakes}</span>
           </div>
         </div>
 
-        <div className="sudoku-game__actions">
+        <div className={styles.actions}>
           <Button
             variant="secondary"
             size="small"
@@ -165,8 +168,8 @@ const SudokuGame = ({
       </div>
 
       {stats.isPaused && !stats.isCompleted && (
-        <div className="sudoku-game__pause-overlay">
-          <div className="sudoku-game__pause-message">Game Paused</div>
+        <div className={styles.pauseOverlay}>
+          <div className={styles.pauseMessage}>Game Paused</div>
         </div>
       )}
 
@@ -181,7 +184,7 @@ const SudokuGame = ({
         onViewResults={handleViewResults}
       />
 
-      <div className="sudoku-game__grid">
+      <div className={styles.grid}>
         <Grid
           board={board}
           onCellChange={handleCellChange}
@@ -189,7 +192,7 @@ const SudokuGame = ({
         />
       </div>
 
-      <div className="sudoku-game__controls">
+      <div className={styles.controls}>
         <Button variant="secondary" size="medium" onClick={onBackToStart}>
           Exit
         </Button>

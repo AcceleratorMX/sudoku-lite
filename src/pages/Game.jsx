@@ -1,5 +1,6 @@
 ﻿import { useParams, useNavigate } from "react-router-dom";
 import { SudokuGame } from "../components/index.jsx";
+import { Game as styles } from "../css";
 
 const Game = () => {
   const { playerId } = useParams();
@@ -43,8 +44,8 @@ const Game = () => {
   };
 
   return (
-    <div className="game-page">
-      <div className="game-page__container">
+    <div className={styles.gamePage}>
+      <div className={styles.container}>
         <SudokuGame
           playerName={playerData.playerName}
           gameSettings={playerData.gameSettings}
@@ -52,7 +53,7 @@ const Game = () => {
           onSaveProgress={handleSaveProgress}
           onGameComplete={handleGameComplete}
           onBackToStart={handleBackToStart}
-          className="game-page__sudoku"
+          className={styles.sudoku}
         />
       </div>
     </div>

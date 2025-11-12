@@ -1,23 +1,24 @@
+import { Button as styles } from "../../css";
+
 const Button = ({
     children,
-    variant = 'primary',
-    size = 'medium',
+    variant = "primary",
+    size = "medium",
     disabled = false,
-    type = 'button',
-    className = '',
+    type = "button",
+    className = "",
     onClick,
     ...props
 }) => {
-    const baseClass = 'button';
-    const variantClass = `button--${variant}`;
-    const sizeClass = `button--${size}`;
-    
+    const variantClass = styles[variant] || styles.primary;
+    const sizeClass = styles[size] || styles.medium;
+
     const buttonClass = [
-        baseClass,
+        styles.button,
         variantClass,
         sizeClass,
         className
-    ].filter(Boolean).join(' ');
+    ].filter(Boolean).join(" ");
 
     return (
         <button

@@ -1,4 +1,5 @@
-import {Cell} from '../index.jsx';
+import { Cell } from "../index.jsx";
+import { Grid as styles } from "../../css";
 
 const Grid = ({
                   board,
@@ -14,13 +15,14 @@ const Grid = ({
     };
 
     if (!board || board.length === 0) {
-        return <div className="sudoku-grid">Loading...</div>;
+        const loadingClass = [styles.grid, styles.loading].join(" ");
+        return <div className={loadingClass}>Loading...</div>;
     }
 
     return (
-        <div className="sudoku-grid">
+        <div className={styles.grid}>
             {board.map((row, rowIndex) => (
-                <div key={rowIndex} className="sudoku-grid__row">
+                <div key={rowIndex} className={styles.row}>
                     {row.map((cell) => (
                         <Cell
                             key={cell.id}

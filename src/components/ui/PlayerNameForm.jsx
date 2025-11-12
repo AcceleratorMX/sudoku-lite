@@ -1,6 +1,7 @@
 ﻿import { useForm } from "react-hook-form";
 import { NAME_VALIDATION } from "../../constants/index.js";
 import { Button } from "../index.jsx";
+import { PlayerNameForm as styles } from "../../css";
 
 const PlayerNameForm = ({ onSubmit, className = "" }) => {
   const {
@@ -18,18 +19,27 @@ const PlayerNameForm = ({ onSubmit, className = "" }) => {
     onSubmit(data.playerName.trim());
   };
 
+  const rootClassName = [styles.playerNameForm, className]
+    .filter(Boolean)
+    .join(" ");
+
+  const inputClassName = [
+    styles.input,
+    errors.playerName ? styles.inputError : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
     <form
-      className={`player-name-form ${className}`}
+      className={rootClassName}
       onSubmit={handleSubmit(onSubmitForm)}
     >
-      <label htmlFor="nickname" className="player-name-form__label"></label>
+      <label htmlFor="nickname" className={styles.label}></label>
       <input
         type="text"
         id="nickname"
-        className={`player-name-form__input ${
-          errors.playerName ? "player-name-form__input--error" : ""
-        }`}
+        className={inputClassName}
         placeholder="Enter your name..."
         {...register("playerName", {
           required: "Name is required",
@@ -48,15 +58,13 @@ const PlayerNameForm = ({ onSubmit, className = "" }) => {
         })}
       />
       {errors.playerName && (
-        <span className="player-name-form__error">
-          {errors.playerName.message}
-        </span>
+        <span className={styles.error}>{errors.playerName.message}</span>
       )}
       <Button
         type="submit"
         variant="primary"
         size="large"
-        className="player-name-form__submit"
+        className={styles.submit}
       >
         Start Game
       </Button>

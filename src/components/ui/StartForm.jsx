@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { NAME_VALIDATION } from "../../constants/index.js";
 import { Button } from "../index.jsx";
 import GameSettingsForm from "./GameSettingsForm.jsx";
+import { StartForm as styles } from "../../css";
 
 const StartForm = ({
   onSubmit,
@@ -24,20 +25,26 @@ const StartForm = ({
     onSubmit(data.playerName.trim());
   };
 
+  const rootClassName = [styles.startForm, className]
+    .filter(Boolean)
+    .join(" ");
+
+  const inputClassName = [
+    styles.input,
+    errors.playerName ? styles.inputError : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
-    <form
-      className={`start-form ${className}`}
-      onSubmit={handleSubmit(onSubmitForm)}
-    >
-      <div className="start-form__fields">
-        <div className="start-form__input-wrapper">
-          <label htmlFor="nickname" className="start-form__label"></label>
+    <form className={rootClassName} onSubmit={handleSubmit(onSubmitForm)}>
+      <div className={styles.fields}>
+        <div className={styles.inputWrapper}>
+          <label htmlFor="nickname" className={styles.label}></label>
           <input
             type="text"
             id="nickname"
-            className={`start-form__input ${
-              errors.playerName ? "start-form__input--error" : ""
-            }`}
+            className={inputClassName}
             placeholder="Enter your name..."
             {...register("playerName", {
               required: "Name is required",
@@ -56,16 +63,14 @@ const StartForm = ({
             })}
           />
           {errors.playerName && (
-            <span className="start-form__error">
-              {errors.playerName.message}
-            </span>
+            <span className={styles.error}>{errors.playerName.message}</span>
           )}
         </div>
 
         <GameSettingsForm
           onSettingsChange={onSettingsChange}
           initialSettings={initialSettings}
-          className="start-form__settings"
+          className={styles.settings}
         />
       </div>
 
@@ -73,7 +78,7 @@ const StartForm = ({
         type="submit"
         variant="primary"
         size="large"
-        className="start-form__submit"
+        className={styles.submit}
       >
         Start Game
       </Button>

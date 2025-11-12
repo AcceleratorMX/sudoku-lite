@@ -1,0 +1,38 @@
+.item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-medium);
+}
+
+.rank {
+    font-weight: bold;
+    color: var(--primary-color);
+    min-width: 25px;
+}
+
+.name {
+    flex: 1;
+    text-align: left;
+    margin-left: 15px;
+    color: var(--text-primary);
+}
+
+.score {
+    font-weight: bold;
+    color: var(--secondary-color);
+}
+
+.current {
+    background: var(--primary-color-light);
+    border: 2px solid var(--primary-color);
+    font-weight: bold;
+}
+
+.current .rank,
+.current .name,
+.current .score {
+    color: var(--primary-color);
+}

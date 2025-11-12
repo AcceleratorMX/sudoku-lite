@@ -3,6 +3,7 @@ import {
   DIFFICULTY_LEVELS,
   DIFFICULTY_SETTINGS,
 } from "../../constants/index.js";
+import { GameSettingsForm as styles } from "../../css";
 
 const GameSettingsForm = ({
   onSettingsChange,
@@ -23,12 +24,16 @@ const GameSettingsForm = ({
     }
   };
 
+  const rootClassName = [styles.gameSettingsForm, className]
+    .filter(Boolean)
+    .join(" ");
+
   return (
-    <div className={`game-settings-form ${className}`}>
-      <label htmlFor="difficulty-select" className="game-settings-form__label"></label>
+    <div className={rootClassName}>
+      <label htmlFor="difficulty-select" className={styles.label}></label>
       <select
         id="difficulty-select"
-        className="game-settings-form__select"
+        className={styles.select}
         {...register("difficulty", {
           onChange: handleDifficultyChange,
         })}
