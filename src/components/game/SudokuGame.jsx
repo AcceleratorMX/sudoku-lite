@@ -1,11 +1,29 @@
 import { useEffect } from "react";
-import { Grid, Button, GameCompletionDialog } from "../index.jsx";
+import { Grid, GameCompletionDialog, GameHeader, GameControls, PauseOverlay } from "../index";
 import { useTimer, useSudokuBoard, useGameStats } from "../../hooks";
 import { formatTime } from "../../utils/formatTime";
 import { calculateScore } from "../../utils/score";
 import { DIFFICULTY_SETTINGS } from "../../constants";
 import { SudokuGame as styles } from "../../css";
 
+/**
+ * SudokuGame Component
+ * 
+ * Main game component that orchestrates the Sudoku game logic.
+ * Manages game state, board operations, timer, statistics, and user interactions.
+ * Handles game persistence, pause/resume functionality, and completion flow.
+ * 
+ * @param {Object} props - Component props
+ * @param {string} [props.playerName="Player"] - The name of the player
+ * @param {Object} props.gameSettings - Game configuration settings
+ * @param {string} props.gameSettings.difficulty - Difficulty level (easy/medium/hard)
+ * @param {Object|null} props.savedGame - Previously saved game state to restore
+ * @param {Function} props.onSaveProgress - Callback to save game progress
+ * @param {Function} props.onGameComplete - Callback when game is completed
+ * @param {Function} props.onBackToStart - Callback to return to start screen
+ * @param {string} [props.className=""] - Additional CSS class names
+ * @returns {JSX.Element} SudokuGame component
+ */
 const SudokuGame = ({
   playerName = "Player",
   gameSettings,
@@ -131,47 +149,19 @@ const SudokuGame = ({
 
   return (
     <div className={rootClassName}>
-      <div className={styles.header}>
-        <div className={styles.info}>
-          <span className={styles.player}>{playerName}</span>
-          <span className={styles.difficulty}>{difficultyLabel}</span>
-        </div>
+      <GameHeader
+        playerName={playerName}
+        difficulty={difficultyLabel}
+        moves={stats.moves}
+        time={time}
+        mistakes={stats.mistakes}
+        isPaused={stats.isPaused}
+        isCompleted={stats.isCompleted}
+        onPause={handlePause}
+        onReset={handleNewGame}
+      />
 
-        <div className={styles.stats}>
-          <div className={styles.stat}>
-            <span className={styles.statLabel}>Moves</span>
-            <span className={styles.statValue}>{stats.moves}</span>
-          </div>
-          <div className={styles.stat}>
-            <span className={styles.statLabel}>Time</span>
-            <span className={styles.statValue}>{formatTime(time)}</span>
-          </div>
-          <div className={styles.stat}>
-            <span className={styles.statLabel}>Mistakes</span>
-            <span className={styles.statValue}>{stats.mistakes}</span>
-          </div>
-        </div>
-
-        <div className={styles.actions}>
-          <Button
-            variant="secondary"
-            size="small"
-            onClick={handlePause}
-            disabled={stats.isCompleted}
-          >
-            {stats.isPaused ? "Resume" : "Pause"}
-          </Button>
-          <Button variant="primary" size="small" onClick={handleNewGame}>
-            Reset
-          </Button>
-        </div>
-      </div>
-
-      {stats.isPaused && !stats.isCompleted && (
-        <div className={styles.pauseOverlay}>
-          <div className={styles.pauseMessage}>Game Paused</div>
-        </div>
-      )}
+      <PauseOverlay isVisible={stats.isPaused && !stats.isCompleted} />
 
       <GameCompletionDialog
         isOpen={stats.isCompleted}
@@ -192,11 +182,7 @@ const SudokuGame = ({
         />
       </div>
 
-      <div className={styles.controls}>
-        <Button variant="secondary" size="medium" onClick={onBackToStart}>
-          Exit
-        </Button>
-      </div>
+      <GameControls onExit={onBackToStart} />
     </div>
   );
 };

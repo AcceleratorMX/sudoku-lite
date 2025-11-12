@@ -8,3 +8,7 @@ export { default as GameCompletionDialog } from './ui/GameCompletionDialog';
 export { default as Cell } from './game/Cell';
 export { default as Grid } from './game/Grid';
 export { default as SudokuGame } from './game/SudokuGame';
+export { default as GameHeader } from './game/GameHeader';
+export { default as GameStats } from './game/GameStats';
+export { default as GameControls } from './game/GameControls';
+export { default as PauseOverlay } from './game/PauseOverlay';
