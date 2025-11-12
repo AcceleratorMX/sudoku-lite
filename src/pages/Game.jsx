@@ -1,15 +1,44 @@
-﻿import { SudokuGame } from "../components/index.jsx";
+﻿import { useParams, useNavigate } from "react-router-dom";
+import { SudokuGame } from "../components/index.jsx";
 
-const Game = ({ onGameComplete, onBackToStart, playerName, gameSettings, savedGame, onSaveProgress }) => {
+const Game = () => {
+  const { playerId } = useParams();
+  const navigate = useNavigate();
+  
+  const playerDataStr = localStorage.getItem(`sudoku-player-${playerId}`);
+  const playerData = playerDataStr ? JSON.parse(playerDataStr) : {
+    playerName: "Player",
+    gameSettings: { difficulty: "medium" }
+  };
+  
+  const savedGameStr = localStorage.getItem(`sudoku-saved-game-${playerId}`);
+  const savedGame = savedGameStr ? JSON.parse(savedGameStr) : null;
+
   const handleGameComplete = (gameResults) => {
-    if (onGameComplete) {
-      onGameComplete(gameResults);
-    }
+    localStorage.setItem(`sudoku-game-results-${playerId}`, JSON.stringify(gameResults));
+    
+    localStorage.removeItem(`sudoku-saved-game-${playerId}`);
+    
+    // Перейти до сторінки результатів
+    navigate(`/scores/${playerId}`);
   };
 
   const handleBackToStart = () => {
-    if (onBackToStart) {
-      onBackToStart();
+    localStorage.removeItem(`sudoku-saved-game-${playerId}`);
+    navigate("/");
+  };
+  
+  const handleSaveProgress = (board, stats, time) => {
+    if (board === null) {
+      localStorage.removeItem(`sudoku-saved-game-${playerId}`);
+    } else {
+      localStorage.setItem(`sudoku-saved-game-${playerId}`, JSON.stringify({
+        board,
+        stats,
+        time,
+        difficulty: playerData.gameSettings?.difficulty,
+        timestamp: Date.now()
+      }));
     }
   };
 
@@ -17,10 +46,10 @@ const Game = ({ onGameComplete, onBackToStart, playerName, gameSettings, savedGa
     <div className="game-page">
       <div className="game-page__container">
         <SudokuGame
-          playerName={playerName || "Player"}
-          gameSettings={gameSettings}
+          playerName={playerData.playerName}
+          gameSettings={playerData.gameSettings}
           savedGame={savedGame}
-          onSaveProgress={onSaveProgress}
+          onSaveProgress={handleSaveProgress}
           onGameComplete={handleGameComplete}
           onBackToStart={handleBackToStart}
           className="game-page__sudoku"

@@ -1,14 +1,25 @@
-﻿import { StartForm } from "../components/index.jsx";
+﻿import { useNavigate } from "react-router-dom";
+import { StartForm } from "../components/index.jsx";
 import { useLocalStorage } from "../hooks";
 import { GAME_SETTINGS_KEY, DIFFICULTY_LEVELS } from "../constants";
+import { generatePlayerId } from "../utils/userUtils";
 
-const Start = ({ onStartGame }) => {
+const Start = () => {
+  const navigate = useNavigate();
+  
   const [gameSettings, setGameSettings] = useLocalStorage(GAME_SETTINGS_KEY, {
     difficulty: DIFFICULTY_LEVELS.MEDIUM,
   });
 
   const handleFormSubmit = (name) => {
-    onStartGame(name, gameSettings);
+    const playerId = generatePlayerId();
+    
+    localStorage.setItem(`sudoku-player-${playerId}`, JSON.stringify({
+      playerName: name,
+      gameSettings,
+    }));
+    
+    navigate(`/game/${playerId}`);
   };
 
   const handleSettingsChange = (newSettings) => {
