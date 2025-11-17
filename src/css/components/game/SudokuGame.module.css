@@ -56,6 +56,15 @@
     font-size: 1.2rem;
     font-weight: bold;
     color: var(--text-primary);
+    transition: color 0.3s ease;
+}
+
+.statWarning {
+    color: var(--status-warning);
+}
+
+.statDanger {
+    color: var(--status-danger);
 }
 
 .completion {

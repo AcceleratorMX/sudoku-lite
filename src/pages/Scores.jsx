@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { Button, ScoresList } from "../components/index";
-import { formatTime, getScoreGrade } from "../utils";
+import { formatTime, getScoreGrade, getGradeStatus } from "../utils";
 import { useScoresStore, usePlayerStore, useGameStore } from "../stores";
 import { ROUTES } from "../constants";
 import { Scores as styles } from "../css";
@@ -99,9 +99,17 @@ const Scores = () => {
       }
     : null;
 
+  const grade = getScoreGrade(results.score);
+  const gradeStatus = getGradeStatus(grade);
+
   const primaryScoreClass = [styles.statValue, styles.statValuePrimary]
     .filter(Boolean)
     .join(" ");
+
+  const gradeClass = [
+    styles.grade,
+    styles[`grade${gradeStatus.charAt(0).toUpperCase() + gradeStatus.slice(1)}`]
+  ].filter(Boolean).join(" ");
 
   return (
     <div className={styles.scoresPage}>
@@ -110,7 +118,7 @@ const Scores = () => {
         <div className={styles.results}>
           <div className={styles.player}>
             <h2 className={styles.playerName}>{results.playerName}</h2>
-            <div className={styles.grade}>{getScoreGrade(results.score)}</div>
+            <div className={gradeClass}>{grade}</div>
             {currentPlayerRank && (
               <div className={styles.rank}>Rank: #{currentPlayerRank}</div>
             )}

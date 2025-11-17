@@ -6,7 +6,7 @@
  */
 
 // Score utilities
-export { calculateScore, getScoreGrade, getScoreColor } from './scoreUtils';
+export { calculateScore, getScoreGrade, getScoreColor, getTimeStatus, getMovesStatus, getGradeStatus } from './scoreUtils';
 
 // User utilities
 export { generatePlayerId } from './userUtils';

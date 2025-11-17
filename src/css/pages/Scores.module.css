@@ -48,8 +48,20 @@
 
 .grade {
     font-size: 1.2rem;
-    color: var(--secondary-color);
     font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.gradeSuccess {
+    color: var(--status-success);
+}
+
+.gradeWarning {
+    color: var(--status-warning);
+}
+
+.gradeDanger {
+    color: var(--status-danger);
 }
 
 .rank {

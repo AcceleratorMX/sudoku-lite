@@ -19,3 +19,6 @@ export * from './sudoku';
 
 // Storage keys
 export * from './storage';
+
+// Game status constants
+export * from './gameStatus';
