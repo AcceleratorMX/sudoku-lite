@@ -318,56 +318,6 @@ input {
 
 /* #region Components */
 
-/* #region PlayerNameForm */
-.player-name-form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.player-name-form__label {
-    font-size: 1.1rem;
-    color: var(--text-secondary);
-    line-height: 1.6;
-    margin-bottom: 8px;
-    text-align: left;
-}
-
-.player-name-form__input {
-    padding: 12px 16px;
-    border: 2px solid var(--border-color);
-    border-radius: var(--radius-medium);
-    font-size: 1rem;
-    transition: border-color 0.3s ease;
-}
-
-.player-name-form__input:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
-
-.player-name-form__input--error {
-    border-color: var(--danger-color);
-}
-
-.player-name-form__input--error:focus {
-    border-color: var(--danger-color);
-    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
-}
-
-.player-name-form__error {
-    color: var(--danger-color);
-    font-size: 0.9rem;
-    margin-top: -10px;
-    text-align: left;
-}
-
-.player-name-form__submit {
-    margin-top: 8px;
-}
-/* #endregion */
-
 /* #region GameSettingsForm */
 .game-settings-form {
     display: flex;

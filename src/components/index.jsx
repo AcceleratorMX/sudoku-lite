@@ -1,5 +1,4 @@
 ﻿export { default as Button } from './ui/Button';
-export { default as PlayerNameForm } from './ui/PlayerNameForm';
 export { default as GameSettingsForm } from './ui/GameSettingsForm';
 export { default as StartForm } from './ui/StartForm';
 export { default as Player } from './ui/Player';
