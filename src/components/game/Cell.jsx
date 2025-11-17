@@ -46,6 +46,8 @@ const Cell = memo(({
     return (
         <input
             type="text"
+            inputMode="numeric"
+            pattern="[1-9]"
             className={classNames(
                 styles.cell,
                 shouldHaveBottomBorder && styles.bottomBorder,
@@ -60,6 +62,11 @@ const Cell = memo(({
             disabled={!isEditable || disabled}
             placeholder=""
             id={id}
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            spellCheck="false"
+            data-form-type="other"
         />
     );
 });

@@ -1,8 +1,9 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import { Button, ScoresList } from "../components/index";
 import { formatTime, getScoreGrade } from "../utils";
-import { usePlayerSession, useScoreManager } from "../hooks";
-import { gameStorageService } from "../services";
+import { useScoresStore, usePlayerStore, useGameStore } from "../stores";
+import { ROUTES } from "../constants";
 import { Scores as styles } from "../css";
 
 /**
@@ -14,16 +15,18 @@ import { Scores as styles } from "../css";
  * - Shows top 10 leaderboard
  * - Provides navigation options
  *
- * Now uses useScoreManager hook for all scoring logic
- * and service layer for storage operations.
+ * Uses Zustand stores for state management
  */
 const Scores = () => {
   const { playerId } = useParams();
-  const { navigateToStart } = usePlayerSession();
+  const navigate = useNavigate();
 
-  // Load game results using service
-  const gameResults = gameStorageService.getGameResults(playerId);
-
+  // Get data from Zustand stores
+  const gameResults = usePlayerStore((state) => state.getGameResults(playerId));
+  const addScore = useScoresStore((state) => state.addScore);
+  const scores = useScoresStore((state) => state.scores); // Subscribe to scores array
+  const clearAllPlayers = usePlayerStore((state) => state.clearAll);
+  const clearAllGames = useGameStore((state) => state.clearAllGames);
   // Use default results if no game results found
   const results = gameResults || {
     playerName: "Player",
@@ -34,30 +37,67 @@ const Scores = () => {
     difficulty: "Medium",
   };
 
-  // Manage scores and leaderboard
-  const { currentPlayerRank, getTopPlayers, getCurrentPlayer } =
-    useScoreManager(gameResults);
+  // Add score to leaderboard when component mounts
+  useEffect(() => {
+    if (gameResults) {
+      const scoreWithDate = {
+        name: gameResults.playerName,
+        score: gameResults.score,
+        time: gameResults.time,
+        moves: gameResults.moves,
+        mistakes: gameResults.mistakes,
+        difficulty: gameResults.difficulty,
+        date: gameResults.date || new Date().toISOString(),
+      };
+      addScore(scoreWithDate);
+    }
+  }, [gameResults, addScore]);
 
   /**
    * Navigate to game page to play again
    */
   const handlePlayAgain = () => {
-    window.location.href = `/game/${playerId}`;
+    window.location.href = ROUTES.GAME(playerId);
   };
 
   /**
    * Clean up and return to start page
+   * Clears ALL game and player data (cleanup old sessions too), keeping only scores
    */
   const handleBackToStart = () => {
-    gameStorageService.clearPlayerData(playerId);
-    navigateToStart();
+    // Clear ALL player data and game data (not just current player)
+    // This ensures clean state for next game
+    clearAllGames();
+    clearAllPlayers();
+    
+    // Force navigation after cleanup
+    setTimeout(() => {
+      navigate(ROUTES.START);
+    }, 0);
   };
 
   // Get top 10 players for leaderboard
-  const topPlayers = getTopPlayers(10);
+  const topScores = scores.slice(0, 10);
+  
+  // Add rank to each player
+  const topPlayers = topScores.map((score, index) => ({
+    ...score,
+    rank: index + 1,
+  }));
 
   // Get current player info if ranked
-  const currentPlayer = getCurrentPlayer(results.playerName);
+  const currentPlayerScore = scores.find(s => s.name === results.playerName);
+  const currentPlayerRank = currentPlayerScore 
+    ? scores.findIndex(s => s.name === results.playerName) + 1 
+    : null;
+  
+  // Add rank to current player if exists
+  const currentPlayerWithRank = currentPlayerScore
+    ? {
+        ...currentPlayerScore,
+        rank: currentPlayerRank,
+      }
+    : null;
 
   const primaryScoreClass = [styles.statValue, styles.statValuePrimary]
     .filter(Boolean)
@@ -126,7 +166,7 @@ const Scores = () => {
           <ScoresList
             title="Top Scores"
             players={topPlayers}
-            currentPlayer={currentPlayer}
+            currentPlayer={currentPlayerWithRank}
             showCurrentUserSeparately={
               currentPlayerRank && currentPlayerRank > 10
             }

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Grid, GameCompletionDialog, GameHeader, GameControls, PauseOverlay } from "../index";
 import { useTimer, useSudokuBoard, useGameStats } from "../../hooks";
+import { useGameStore, usePlayerStore } from "../../stores";
 import { formatTime, calculateScore, classNames } from "../../utils";
 import { DIFFICULTY_SETTINGS } from "../../constants";
 import { SudokuGame as styles } from "../../css";
@@ -12,11 +13,10 @@ import { SudokuGame as styles } from "../../css";
  * Manages game state, board operations, timer, statistics, and user interactions.
  * Handles game persistence, pause/resume functionality, and completion flow.
  * 
+ * Now gets player data directly from Zustand stores (no props drilling!)
+ * 
  * @param {Object} props - Component props
- * @param {string} [props.playerName="Player"] - The name of the player
- * @param {Object} props.gameSettings - Game configuration settings
- * @param {string} props.gameSettings.difficulty - Difficulty level (easy/medium/hard)
- * @param {Object|null} props.savedGame - Previously saved game state to restore
+ * @param {string} props.playerId - Player ID to load data from stores
  * @param {Function} props.onSaveProgress - Callback to save game progress
  * @param {Function} props.onGameComplete - Callback when game is completed
  * @param {Function} props.onBackToStart - Callback to return to start screen
@@ -24,19 +24,28 @@ import { SudokuGame as styles } from "../../css";
  * @returns {JSX.Element} SudokuGame component
  */
 const SudokuGame = ({
-  playerName = "Player",
-  gameSettings,
-  savedGame,
+  playerId,
   onSaveProgress,
   onGameComplete,
   onBackToStart,
   className = "",
 }) => {
+  const playerData = usePlayerStore((state) => state.getPlayerData(playerId));
+  const savedGame = useGameStore((state) => state.getSavedGame(playerId));
+  const gameSettings = useGameStore((state) => state.gameSettings);
+  
+  // Try to get playerName from multiple sources (savedGame first, then playerData)
+  const playerName = savedGame?.playerName || playerData?.playerName || "Player";
   const difficulty = gameSettings?.difficulty || "medium";
   const difficultyLabel = DIFFICULTY_SETTINGS[difficulty]?.label || "Medium";
 
+  // Check if saved game is valid - it's valid if it exists and has matching difficulty
   const validSavedGame =
-    savedGame && savedGame.difficulty === difficulty ? savedGame : null;
+    savedGame && 
+    savedGame.board && 
+    (savedGame.difficulty === difficulty || !savedGame.difficulty)
+      ? savedGame
+      : null;
 
   const {
     board,
