@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { classNames } from "../../utils";
+import { classNames, getScoreGrade, getGradeStatus } from "../../utils";
 import { Player as styles } from "../../css";
 
 /**
@@ -7,6 +7,7 @@ import { Player as styles } from "../../css";
  * 
  * Displays a single player entry in the leaderboard with rank, name, and score.
  * Can highlight the current user with a special style.
+ * Shows grade with appropriate color based on score.
  * 
  * @param {Object} props - Component props
  * @param {number} props.rank - Player's rank in the leaderboard
@@ -16,11 +17,19 @@ import { Player as styles } from "../../css";
  * @returns {JSX.Element} Player component
  */
 const Player = memo(({ rank, name, score, isCurrentUser = false }) => {
+    const grade = getScoreGrade(score);
+    const gradeStatus = getGradeStatus(grade);
+    
+    const scoreClass = classNames(
+        styles.score,
+        styles[`score${gradeStatus.charAt(0).toUpperCase() + gradeStatus.slice(1)}`]
+    );
+
     return (
         <div className={classNames(styles.item, isCurrentUser && styles.current)}>
             <span className={styles.rank}>{rank}.</span>
             <span className={styles.name}>{name}</span>
-            <span className={styles.score}>{score}</span>
+            <span className={scoreClass}>{score}</span>
         </div>
     );
 });

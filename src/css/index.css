@@ -11,6 +11,12 @@
     --warning-dark: #f57c00;
     --info-color: #2196f3;
 
+    /* Status colors for game stats */
+    --status-success: #4caf50;
+    --status-warning: #ff9800;
+    --status-danger: #f44336;
+    --status-neutral: #333333;
+
     --text-primary: #333333;
     --text-secondary: #666666;
     --text-muted: #999999;

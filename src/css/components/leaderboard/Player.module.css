@@ -23,6 +23,19 @@
 .score {
     font-weight: bold;
     color: var(--secondary-color);
+    transition: color 0.3s ease;
+}
+
+.scoreSuccess {
+    color: var(--status-success);
+}
+
+.scoreWarning {
+    color: var(--status-warning);
+}
+
+.scoreDanger {
+    color: var(--status-danger);
 }
 
 .current {

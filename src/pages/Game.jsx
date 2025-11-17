@@ -1,7 +1,7 @@
-﻿import { useParams } from "react-router-dom";
+﻿import { useParams, useNavigate } from "react-router-dom";
 import { SudokuGame } from "../components/index";
-import { usePlayerSession } from "../hooks";
-import { gameStorageService } from "../services";
+import { useGameStore, usePlayerStore } from "../stores";
+import { ROUTES } from "../constants";
 import { Game as styles } from "../css";
 
 /**
@@ -12,21 +12,17 @@ import { Game as styles } from "../css";
  * - Renders SudokuGame component
  * - Handles game completion and navigation
  *
- * Now uses service layer for storage operations instead of
- * direct localStorage manipulation.
+ * Uses Zustand stores for state management
  */
 const Game = () => {
   const { playerId } = useParams();
-  const { navigateToScores, navigateToStart } = usePlayerSession();
+  const navigate = useNavigate();
 
-  // Load player data using service
-  const playerData = gameStorageService.getPlayerData(playerId) || {
-    playerName: "Player",
-    gameSettings: { difficulty: "medium" },
-  };
-
-  // Load saved game using service
-  const savedGame = gameStorageService.getSavedGame(playerId);
+  // Get actions from Zustand stores (no need to pass data as props)
+  const saveGameProgress = useGameStore((state) => state.saveGameProgress);
+  const clearAllGames = useGameStore((state) => state.clearAllGames);
+  const saveGameResults = usePlayerStore((state) => state.saveGameResults);
+  const clearAllPlayers = usePlayerStore((state) => state.clearAll);
 
   /**
    * Handle game completion
@@ -34,18 +30,22 @@ const Game = () => {
    * @param {Object} gameResults - Final game results
    */
   const handleGameComplete = (gameResults) => {
-    gameStorageService.saveGameResults(playerId, gameResults);
-    gameStorageService.removeSavedGame(playerId);
-    navigateToScores(playerId);
+    saveGameResults(playerId, gameResults);
+    navigate(ROUTES.SCORES(playerId));
   };
 
   /**
    * Handle back to start navigation
-   * Clears saved game and returns to start page
+   * Clears ALL game and player data and returns to start page
    */
   const handleBackToStart = () => {
-    gameStorageService.removeSavedGame(playerId);
-    navigateToStart();
+    clearAllGames();
+    clearAllPlayers();
+    
+    // Force navigation after cleanup
+    setTimeout(() => {
+      navigate(ROUTES.START);
+    }, 0);
   };
 
   /**
@@ -55,15 +55,8 @@ const Game = () => {
    * @param {number} time - Elapsed time
    */
   const handleSaveProgress = (board, stats, time) => {
-    if (board === null) {
-      gameStorageService.removeSavedGame(playerId);
-    } else {
-      gameStorageService.saveGameProgress(playerId, {
-        board,
-        stats,
-        time,
-        difficulty: playerData.gameSettings?.difficulty,
-      });
+    if (board !== null) {
+      saveGameProgress(playerId, board, stats, time);
     }
   };
 
@@ -71,9 +64,7 @@ const Game = () => {
     <div className={styles.gamePage}>
       <div className={styles.container}>
         <SudokuGame
-          playerName={playerData.playerName}
-          gameSettings={playerData.gameSettings}
-          savedGame={savedGame}
+          playerId={playerId}
           onSaveProgress={handleSaveProgress}
           onGameComplete={handleGameComplete}
           onBackToStart={handleBackToStart}

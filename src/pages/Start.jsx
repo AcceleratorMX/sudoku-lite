@@ -1,6 +1,8 @@
-﻿import { StartForm } from "../components/index.jsx";
-import { useLocalStorage, usePlayerSession } from "../hooks";
-import { GAME_SETTINGS_KEY, DIFFICULTY_LEVELS } from "../constants";
+﻿import { useNavigate } from "react-router-dom";
+import { StartForm } from "../components/index";
+import { useGameStore, usePlayerStore } from "../stores";
+import { generatePlayerId } from "../utils";
+import { ROUTES } from "../constants";
 import { Start as styles } from "../css";
 
 /**
@@ -11,22 +13,34 @@ import { Start as styles } from "../css";
  * - Select game difficulty
  * - Start a new game
  * 
- * Uses usePlayerSession hook to manage session creation
- * and navigation logic.
+ * 
+ * Uses Zustand stores for state management
  */
 const Start = () => {
-  const { startNewSession } = usePlayerSession();
-  
-  const [gameSettings, setGameSettings] = useLocalStorage(GAME_SETTINGS_KEY, {
-    difficulty: DIFFICULTY_LEVELS.MEDIUM,
-  });
+  const navigate = useNavigate();
+  const gameSettings = useGameStore((state) => state.gameSettings);
+  const setGameSettings = useGameStore((state) => state.setGameSettings);
+  const startNewGame = useGameStore((state) => state.startNewGame);
+  const savePlayerData = usePlayerStore((state) => state.savePlayerData);
 
   /**
    * Handle form submission - start new game session
    * @param {string} name - Player name from form
    */
   const handleFormSubmit = (name) => {
-    startNewSession(name, gameSettings);
+    const playerId = generatePlayerId();
+    
+    // Save player data
+    savePlayerData(playerId, {
+      playerName: name,
+      gameSettings,
+    });
+    
+    // Start new game in game store
+    startNewGame(playerId, name, gameSettings);
+    
+    // Navigate to game page
+    navigate(ROUTES.GAME(playerId));
   };
 
   /**

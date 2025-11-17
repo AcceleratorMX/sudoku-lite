@@ -1,3 +1,12 @@
+import { 
+  TIME_STATUS, 
+  TIME_THRESHOLDS, 
+  MOVES_STATUS, 
+  MOVES_THRESHOLDS, 
+  GRADE_STATUS,
+  SCORE_THRESHOLDS 
+} from '../constants';
+
 /**
  * Calculate final game score based on performance metrics
  * 
@@ -16,11 +25,11 @@ export function calculateScore(time, moves, mistakes) {
   let score = 1000;
   
   // Time penalty: penalize for taking longer than 3 minutes
-  const timeOver180 = Math.max(0, time - 180);
+  const timeOver180 = Math.max(0, time - TIME_THRESHOLDS.DANGER);
   score -= timeOver180;
   
   // Moves penalty: penalize for making more than 81 moves
-  const movesOver81 = Math.max(0, moves - 81);
+  const movesOver81 = Math.max(0, moves - MOVES_THRESHOLDS.DANGER);
   score -= movesOver81 * 2;
   
   // Mistakes penalty: heavy penalty for mistakes
@@ -37,9 +46,9 @@ export function calculateScore(time, moves, mistakes) {
  * @returns {string} Grade label
  */
 export function getScoreGrade(score) {
-  if (score >= 900) return "Excellent!";
-  if (score >= 700) return "Great!";
-  if (score >= 500) return "Good!";
+  if (score >= SCORE_THRESHOLDS.EXCELLENT) return "Excellent!";
+  if (score >= SCORE_THRESHOLDS.GREAT) return "Great!";
+  if (score >= SCORE_THRESHOLDS.GOOD) return "Good!";
   return "Try Again!";
 }
 
@@ -50,8 +59,40 @@ export function getScoreGrade(score) {
  * @returns {string} Color class name
  */
 export function getScoreColor(score) {
-  if (score >= 900) return "excellent";
-  if (score >= 700) return "great";
-  if (score >= 500) return "good";
+  if (score >= SCORE_THRESHOLDS.EXCELLENT) return "excellent";
+  if (score >= SCORE_THRESHOLDS.GREAT) return "great";
+  if (score >= SCORE_THRESHOLDS.GOOD) return "good";
   return "poor";
+}
+
+/**
+ * Get time status based on elapsed time
+ * @param {number} time - Time in seconds
+ * @returns {string} Status: 'normal' | 'warning' | 'danger'
+ */
+export function getTimeStatus(time) {
+  if (time >= TIME_THRESHOLDS.DANGER) return TIME_STATUS.DANGER;
+  if (time >= TIME_THRESHOLDS.WARNING) return TIME_STATUS.WARNING;
+  return TIME_STATUS.NORMAL;
+}
+
+/**
+ * Get moves status based on number of moves
+ * @param {number} moves - Number of moves
+ * @returns {string} Status: 'normal' | 'danger'
+ */
+export function getMovesStatus(moves) {
+  if (moves > MOVES_THRESHOLDS.DANGER) return MOVES_STATUS.DANGER;
+  return MOVES_STATUS.NORMAL;
+}
+
+/**
+ * Get grade status for styling
+ * @param {string} grade - Grade label
+ * @returns {string} Status: 'success' | 'warning' | 'danger'
+ */
+export function getGradeStatus(grade) {
+  if (grade === "Excellent!" || grade === "Great!") return GRADE_STATUS.SUCCESS;
+  if (grade === "Good!") return GRADE_STATUS.WARNING;
+  return GRADE_STATUS.DANGER;
 }

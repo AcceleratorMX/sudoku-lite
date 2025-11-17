@@ -63,10 +63,10 @@ Your final score is calculated based on the following formula:
 
 ## 🎲 Difficulty Levels
 
-- **Easy**: 40-45 pre-filled cells
-- **Medium**: 30-35 pre-filled cells
-- **Hard**: 25-28 pre-filled cells
-- **Expert**: 20-22 pre-filled cells
+- **Easy**: 40 pre-filled cells
+- **Medium**: 30 pre-filled cells
+- **Hard**: 25 pre-filled cells
+- **Expert**: 20 pre-filled cells
 
 ## ✨ Features
 
@@ -76,12 +76,13 @@ Your final score is calculated based on the following formula:
 - **Timer** - Track how long it takes to complete the puzzle
 - **Move counter** - Keep track of your total moves
 - **Score calculation** - Based on time, moves, and mistakes
-- **Local leaderboard** - Top scores saved in browser localStorage
+- **Local leaderboard** - Top scores saved in browser localStorage with smart ranking (newer results rank higher for equal scores)
 - **Pause functionality** - Pause and resume the game anytime
 - **Game completion dialog** - Modal dialog using React Portal
 - **Form validation** - Using react-hook-form for player settings
-- **Auto-save** - Game state automatically saved on every move with debouncing
-- **Resume on refresh** - Continue your game after page reload
+- **Auto-save** - Game state automatically saved on every move with debouncing (500ms)
+- **Resume on refresh** - Continue your game after page reload or browser close
+- **State management with Zustand** - Centralized state management with automatic localStorage persistence
 - **Responsive design** - Works on desktop and mobile devices
 - **Optimized performance** - Using React.memo for frequently re-rendered components
 
@@ -89,13 +90,14 @@ Your final score is calculated based on the following formula:
 
 ```text
 src/
-├── components/             # Reusable UI components
+├── components/            # Reusable components
 │   ├── common/            # Shared components (Button, Portal)
-│   ├── forms/             # Form components (StartForm, Difficulty)
+│   ├── forms/              # Form components (StartForm, Difficulty)
 │   ├── leaderboard/       # Leaderboard components (Player, ScoresList)
 │   └── game/              # Game components (Cell, Grid, SudokuGame, GameHeader, GameStats, GameControls, PauseOverlay, GameCompletionDialog)
 ├── pages/                 # Page components (Start, Game, Scores)
 ├── routes/                # Routing configuration
+├── stores/                # Zustand state management stores
 ├── hooks/                 # Custom React hooks
 ├── services/              # Business logic services
 │   ├── storage/           # LocalStorage operations (StorageService, GameStorageService)
@@ -119,31 +121,41 @@ The application uses custom hooks to keep components clean and separate business
 - **`useTimer`** - Manages game timer with start, pause, reset, and initial time support
 - **`useSudokuBoard`** - Handles valid sudoku generation, validation, cell updates, and state restoration
 - **`useGameStats`** - Tracks moves, mistakes, calculates final score, and supports state restoration
-- **`useLocalStorage`** - Manages persistent storage with get/set/remove operations
-- **`useGameState`** - Manages complete app state (current page, player data, game progress)
 - **`useGamePersistence`** - Handles game state persistence and auto-save with debouncing
-- **`usePlayerSession`** - Manages player session (ID generation, name storage, session tracking)
-- **`useScoreManager`** - Score tracking, saving, and leaderboard management
 
-## 🏗️ Architecture
+## 🗄️ State Management (Zustand Stores)
 
-The project follows **SOLID principles** and **separation of concerns**:
+The application uses **Zustand** for global state management with automatic localStorage persistence:
 
-- **Services Layer** - Business logic separated from UI (SudokuGenerator, StorageService, GameStorageService)
-- **Custom Hooks** - Reusable stateful logic
-- **Component Organization** - Components grouped by feature (common, forms, leaderboard, game)
-- **Barrel Exports** - Clean import paths through index.js files
-- **Performance Optimization** - React.memo applied to frequently re-rendered components (Cell, Player, GameStats, PauseOverlay)
-- **Utility Functions** - Pure functions for calculations and formatting
-- **CSS Modules** - Scoped styling matching component structure
+### `useGameStore`
+
+- Manages saved games per player (board state, timer, stats)
+- Stores game settings (difficulty level)
+- Auto-persists to `sudoku-game-storage` key in localStorage
+- Methods: `startNewGame`, `saveGameProgress`, `getSavedGame`, `clearGame`, `clearAllGames`
+
+### `usePlayerStore`
+
+- Manages player information per session (name, ID)
+- Stores game results before scoring
+- Auto-persists to `sudoku-players` key in localStorage
+- Methods: `savePlayerData`, `getPlayerData`, `saveGameResults`, `getGameResults`, `clearPlayerData`, `clearAll`
+
+### `useScoresStore`
+
+- Manages top 100 scores for leaderboard
+- Smart sorting: by score (descending), then by date (newest first for equal scores)
+- Auto-persists to `sudoku-scores` key in localStorage
+- Methods: `addScore`, `getTopScores`, `getPlayerRank`, `getPlayerScore`
 
 ## 🛠️ Technologies
 
 - **React** - UI library
+- **Zustand** - Lightweight state management with persist middleware for automatic localStorage synchronization
+- **React Router DOM** - Client-side routing
 - **react-hook-form** - Form validation and management
 - **prop-types** - Runtime type checking for React props
 - **Vite** - Build tool and dev server
 - **React Portal** - For modal dialogs
 - **CSS Custom Properties** - For theming and styling
 - **ESLint** - Code quality and linting
-- **localStorage API** - For persisting game results, settings, and progress
