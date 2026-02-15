@@ -1,0 +1,32 @@
+{
+  "source": {
+    "include": ["src"],
+    "includePattern": ".+\\.(js|jsx)$",
+    "excludePattern": "(node_modules|css|__tests__)"
+  },
+  "opts": {
+    "destination": "./docs",
+    "recurse": true,
+    "readme": "./README.md",
+    "package": "./package.json",
+    "template": "./node_modules/clean-jsdoc-theme"
+  },
+  "plugins": ["plugins/markdown"],
+  "templates": {
+    "cleverLinks": true,
+    "monospaceLinks": false,
+    "default": {
+      "outputSourceFiles": true,
+      "includeDate": false
+    },
+    "clean-jsdoc-theme": {
+      "theme_config": {
+        "title": "Sudoku Lite",
+        "homepageTitle": "Sudoku Lite — API Documentation"
+      }
+    }
+  },
+  "markdown": {
+    "idInHeadings": true
+  }
+}
