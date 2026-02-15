@@ -1,6 +1,7 @@
 ﻿// Common components
 export { default as Button } from './common/Button';
 export { default as Portal } from './common/Portal';
+export { default as CookieConsent } from './common/CookieConsent';
 
 // Form components
 export { default as Difficulty } from './forms/Difficulty';

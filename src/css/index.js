@@ -5,6 +5,7 @@ import ScoresPageStyles from "./pages/Scores.module.css";
 
 // Common components
 import ButtonStyles from "./components/common/Button.module.css";
+import CookieConsentStyles from "./components/common/CookieConsent.module.css";
 
 // Form components
 import DifficultyStyles from "./components/forms/Difficulty.module.css";
@@ -31,6 +32,7 @@ export const pages = {
 export const components = {
   common: {
     Button: ButtonStyles,
+    CookieConsent: CookieConsentStyles,
   },
   forms: {
     Difficulty: DifficultyStyles,
@@ -48,7 +50,7 @@ export const components = {
   },
 };
 
-export const { Button } = components.common;
+export const { Button, CookieConsent } = components.common;
 
 export const { Difficulty, StartForm } = components.forms;
 

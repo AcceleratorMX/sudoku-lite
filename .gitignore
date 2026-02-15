@@ -25,3 +25,11 @@ dist-ssr
 
 # Refactoring analysis (internal use only)
 refactoring-analysis.txt
+
+.agent
+
+# License checker raw output
+license-report.json
+
+*storybook.log
+storybook-static
