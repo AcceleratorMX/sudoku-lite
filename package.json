@@ -9,7 +9,9 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "docs": "jsdoc -c jsdoc.config.json"
+    "docs": "jsdoc -c jsdoc.config.json",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "prop-types": "^15.8.1",
@@ -32,6 +34,9 @@
     "eslint-plugin-react-refresh": "^0.4.22",
     "globals": "^16.4.0",
     "jsdoc": "^4.0.5",
-    "vite": "^7.1.7"
+    "vite": "^7.1.7",
+    "storybook": "^10.2.8",
+    "@storybook/react-vite": "^10.2.8",
+    "eslint-plugin-storybook": "^10.2.8"
   }
 }

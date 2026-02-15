@@ -30,3 +30,6 @@ refactoring-analysis.txt
 
 # License checker raw output
 license-report.json
+
+*storybook.log
+storybook-static
