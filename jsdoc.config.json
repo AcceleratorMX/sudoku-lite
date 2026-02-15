@@ -5,7 +5,7 @@
     "excludePattern": "(node_modules|css|__tests__)"
   },
   "opts": {
-    "destination": "./docs",
+    "destination": "./docs/api",
     "recurse": true,
     "readme": "./README.md",
     "package": "./package.json",
