@@ -7,6 +7,7 @@ import { SUDOKU, DIFFICULTY_SETTINGS } from "../../constants";
  * using backtracking algorithm and randomization.
  * 
  * @class SudokuGenerator
+ * @hideconstructor
  */
 
 /**
@@ -100,6 +101,8 @@ function fillBoard(board) {
  * using random number placement and backtracking.
  * 
  * @returns {number[][]} 2D array representing a solved board
+ * @memberof SudokuGenerator
+ * @static
  */
 export function generateSolvedBoard() {
   const board = Array(SUDOKU.GRID_SIZE)
@@ -125,6 +128,8 @@ export function generateSolvedBoard() {
  *   - isEditable: Whether player can edit this cell
  *   - rowIndex: Row position
  *   - colIndex: Column position
+ * @memberof SudokuGenerator
+ * @static
  * 
  * @example
  * const board = generatePuzzleBoard('medium');
@@ -186,6 +191,8 @@ export function generatePuzzleBoard(difficultyLevel) {
  * @param {number} colIndex - Column to check
  * @param {number|string} value - Value to validate
  * @returns {boolean} True if placement is valid
+ * @memberof SudokuGenerator
+ * @static
  */
 export function validateCellPlacement(board, rowIndex, colIndex, value) {
   if (!value || value === SUDOKU.EMPTY_CELL) return true;
