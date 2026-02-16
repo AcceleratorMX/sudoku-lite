@@ -7,7 +7,7 @@
  * - Easy to replace localStorage with another storage
  * - Easy to test (can pass mock storage)
  * 
- * @class StorageService
+ * @class
  */
 class StorageService {
   /**
@@ -102,6 +102,7 @@ class StorageService {
 }
 
 // Export singleton instance for convenience
+/** @ignore */
 export const storageService = new StorageService();
 
 // Export class for creating custom instances
