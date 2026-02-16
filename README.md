@@ -189,3 +189,39 @@ This project is licensed under the [MIT License](./LICENSE).
 **Oleksandr Karpinskyi**
 
 - GitHub: [@AcceleratorMX](https://github.com/AcceleratorMX)
+
+## Third Party Licenses
+
+This project uses open source privacy-respecting software. We strictly adhere to all license requirements.
+
+### Creative Commons Attribution 4.0 (CC-BY-4.0)
+
+This project uses **[caniuse-lite](https://github.com/browserslist/caniuse-lite)**, which is licensed under the [class Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/).
+
+- **Attribution:** The data is provided by the caniuse-lite contributors.
+
+### Apache License 2.0
+
+The following packages are licensed under the Apache License 2.0:
+
+- **@humanfs/core**, **@humanfs/node**, **@humanwhocodes/module-importer**, **@humanwhocodes/retry** (by Nicholas C. Zakas)
+- **eslint-visitor-keys** (by Toru Nagashima)
+- **baseline-browser-mapping** (by Web Platform DX)
+
+### BSD Licenses
+
+The following packages are licensed under BSD-2-Clause or BSD-3-Clause licenses:
+
+- **eslint-scope**, **espree** (BSD-2-Clause)
+- **esrecurse**, **estraverse**, **esutils** (BSD-2-Clause)
+- **uri-js** (BSD-2-Clause by Gary Court)
+- **esquery**, **source-map-js** (BSD-3-Clause)
+
+### Python Software Foundation License 2.0
+
+- **argparse** (port of Python's argparse)
+
+### MIT License
+
+All other dependencies (160+ packages) are licensed under the **MIT License**.
+See the full [License Report](./license-report.txt) for details.
